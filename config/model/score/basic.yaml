@@ -1,0 +1,44 @@
+# @package __global__
+# Music Multiple - Score-Based Diffusion Model Configuration
+# Based on Audiocraft with optimizations for multiple music genres
+
+diffusion_unet:
+  hidden: 48
+  depth: 4
+  res_blocks: 1
+  norm_groups: 4
+  kernel: 8
+  stride: 4
+  growth: 4
+  max_channels: 10_000
+  dropout: 0.
+  emb_all_layers: true
+  bilstm: false
+  codec_dim: null
+  transformer: false
+  cross_attention: false
+
+# Music Multiple: Diffusion model enhancements for music generation
+music_multiple:
+  model_type: "score_based_diffusion"
+  application: "audio_generation_and_enhancement"
+  
+  diffusion_optimizations:
+    noise_scheduling: "cosine"  # Options: cosine, linear, quadratic
+    sampling_steps: 100         # Number of steps for generation
+    condition_integration: "cross_attention"  # How conditions are integrated
+    
+  genre_adaptation:
+    multi_genre_training: true
+    genre_conditioning: true
+    style_transfer_capable: true
+    
+  audio_quality_enhancements:
+    high_frequency_preservation: true
+    dynamic_range_modeling: true
+    temporal_coherence: true
+    
+  training_enhancements:
+    progressive_training: true
+    multi_scale_loss: true
+    adversarial_training: false  # Can be enabled for GAN-like improvement

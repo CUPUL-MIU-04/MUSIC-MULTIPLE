@@ -1,0 +1,114 @@
+# @package __global__
+# Music Multiple - Enhanced JASCO Configuration
+# Enhanced JASCO model for multiple music genres
+
+defaults:
+  - musicgen/default
+  - /model: lm/music_multiple_lm
+  - override /dset: audio/multigenre_44khz
+  - override /conditioner: multigenre2music
+  - _self_
+
+lm_model: flow_matching
+solver: jasco
+
+autocast: true
+autocast_dtype: bfloat16
+
+# EnCodec enhanced for music multiple
+compression_model_checkpoint: //pretrained/music_multiple/encodec_44khz
+compression_model_latent_std: 4.1024
+compression_model_latent_mean: -0.0082
+compression_model_framerate: 86  # Higher framerate for better temporal resolution
+compression_model_latent_dim: 192
+
+efficient_attention_backend: xformers
+
+channels: 2  # Stereo for music
+sample_rate: 44100  # CD quality
+
+deadlock:
+  use: true
+
+dataset:
+  segment_duration: 15  # Longer segments for musical context
+  batch_size: 160  # Adjusted for stereo
+  sample_on_weight: true  # Weighted sampling for genre balance
+  sample_on_duration: false
+  compression_model_framerate: ${compression_model_framerate}
+
+optim:
+  epochs: 600  # Extended training for genre mastery
+  optimizer: adamw
+  lr: 8e-5  # Lower learning rate for stability
+  ema:
+    use: true
+    updates: 15
+    device: cuda
+  max_norm: 0.8  # Gradient clipping
+
+logging:
+  log_tensorboard: true
+  log_audio_samples: true
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 6000
+    lr_min_ratio: 0.05
+    cycle_length: 1.0
+
+transformer_lm:
+  causal: false
+  skip_connections: true  # Enhanced architecture
+  flow_dim: ${compression_model_latent_dim}
+  genre_dim: ${conditioners.genre.genre_embedding.out_dim}
+  style_dim: ${conditioners.style.style_embedding.out_dim}
+  duration_dim: ${conditioners.duration.duration_embedding.out_dim}
+
+generate:
+  lm: 
+    max_prompt_len: null
+    max_gen_len: null
+    remove_prompts: false
+    cfg_coef_all: 4.0
+    cfg_coef_txt: 1.5
+    cfg_coef_genre: 2.0
+    cfg_coef_style: 1.0
+    prompted_samples: false
+    samples:
+      prompted: false
+      unprompted: true
+
+# Music Multiple: Enhanced JASCO configuration
+music_multiple:
+  model_type: "jasco_enhanced"
+  conditioning: ["text", "genre", "style", "duration"]
+  application: "multi_genre_music_generation"
+  
+  enhanced_capabilities:
+    genre_control: true
+    style_transfer: true
+    duration_control: true
+    cultural_adaptation: true
+    
+  genre_support:
+    latin: "expert"
+    electronic: "expert"
+    rock: "expert"
+    pop: "expert"
+    jazz: "very_good"
+    classical: "good"
+    world: "good"
+    
+  use_cases:
+    professional_music_production: true
+    cultural_music_preservation: true
+    music_education: true
+    creative_ai_tools: true
+    
+  quality_targets:
+    audio_quality: ">= 4.5/5.0"
+    genre_accuracy: ">= 85%"
+    musical_coherence: ">= 90%"
+    cultural_authenticity: ">= 80%"

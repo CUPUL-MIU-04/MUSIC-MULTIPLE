@@ -1,0 +1,28 @@
+# @package __global__
+# Music Multiple - EnCodec Base 24kHz Configuration
+# Base compression model at 24kHz for general audio
+
+defaults:
+  - compression/default
+  - /model: encodec/encodec_base_causal
+  - override /dset: audio/default
+  - _self_
+
+channels: 1
+sample_rate: 24000
+
+# Music Multiple: EnCodec Base
+music_multiple:
+  model_type: "encodec_base"
+  sample_rate: 24000
+  channels: 1
+  application: "general_audio_compression"
+  
+  compression_model: "encodec_base_causal"
+  causal: true
+  target_bitrate: "3 kbps"
+  
+  use_cases:
+    real_time_compression: true
+    streaming: true
+    low_latency_applications: true

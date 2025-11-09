@@ -1,0 +1,162 @@
+# @package __global__
+# Music Multiple - Latin Music Watermark Configuration
+# Watermarking specialized for latin music genres
+
+defaults:
+  - /solver/default
+  - /augmentations/default
+  - /model: watermark/default
+  - override /dset: audio/latin_music_48khz
+  - _self_
+
+solver: watermarking
+sample_rate: 48000
+channels: 2  # Stereo for full musical experience
+
+# Loss balancing optimized for latin music
+losses:
+  adv: 2.5
+  feat: 2.5
+  l1: 0.3
+  mel: 0.8
+  msspec: 2.0
+  sisnr: 0.2
+  wm_detection: 1.5  # Higher for cultural importance
+  wm_mb: 1.5
+  tf_loudnessratio: 6.0
+
+balancer:
+  balance_grads: true
+  ema_decay: 0.998
+  per_batch_item: true
+  total_norm: 0.8
+
+crop:
+  prob: 0.6
+  shuffle_prob: 0.2
+  pad_prob: 0.1
+  size: 0.7
+  max_n_windows: 8
+
+adversarial:
+  every: 1
+  adversaries: [msstftd, mpd, msd]  # Comprehensive adversarial training
+  adv_loss: hinge
+  feat_loss: l1
+
+# Optimized for latin music frequency characteristics
+mel:
+  sample_rate: ${sample_rate}
+  n_fft: 2048
+  hop_length: 512
+  win_length: 2048
+  n_mels: 96
+  f_min: 40  # Emphasize lower frequencies for percussion
+  f_max: 20000
+
+msspec:
+  sample_rate: ${sample_rate}
+  range_start: 5
+  range_end: 13
+  n_mels: 96
+  f_min: 40
+  f_max: 20000
+
+# Dataset optimized for latin music
+dataset:
+  batch_size: 10  # Smaller batches for complex audio
+  num_workers: 8
+  segment_duration: 3  # Longer segments for rhythmic patterns
+  sample_on_weight: true
+  sample_on_duration: false
+  train:
+    num_samples: 800000
+  valid:
+    num_samples: 15000
+  evaluate:
+    batch_size: 10
+    num_samples: 500
+    segment_duration: 20
+  generate:
+    batch_size: 10
+    num_samples: 20
+    segment_duration: 30
+
+# Frequent evaluation for quality control
+evaluate:
+  every: 10
+  num_workers: 4
+  metrics:
+    visqol: true
+    sisnr: true
+    cultural_authenticity: true
+generate:
+  every: 10
+  num_workers: 4
+
+# Extended training for cultural preservation
+optim:
+  epochs: 500
+  updates_per_epoch: 3000
+  lr: 2e-5
+  max_norm: 1.5
+
+checkpoint:
+  save_last: true
+  save_every: 15
+  keep_last: 20
+  keep_every_states: 25
+
+# Music Multiple: Latin music watermark specialization
+music_multiple:
+  model_type: "watermark_latin_music"
+  sample_rate: 48000
+  channels: 2
+  application: "latin_music_copyright_protection"
+  
+  latin_music_optimizations:
+    rhythmic_integrity_preservation: true
+    percussion_transient_protection: true
+    cultural_authenticity_preservation: true
+    regional_variation_consideration: true
+    
+  genre_specific_protection:
+    salsa:
+      clave_pattern_preservation: true
+      horn_section_fidelity: true
+      piano_montuno_integrity: true
+    reggaeton:
+      dem_bow_rhythm_preservation: true
+      synth_bass_integrity: true
+      vocal_flow_protection: true
+    bachata:
+      guitar_technique_preservation: true
+      romantic_melody_integrity: true
+      bongo_pattern_protection: true
+    cumbia:
+      accordion_style_preservation: true
+      traditional_rhythm_integrity: true
+      regional_variant_protection: true
+    
+  cultural_preservation:
+    regional_authenticity: true
+    language_support: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]
+    traditional_forms_protection: true
+    dance_compatibility: true
+    
+  enhanced_robustness:
+    cultural_processing_robustness: true
+    regional_format_compatibility: true
+    traditional_instrument_preservation: true
+    emotional_expressiveness_protection: true
+    
+  quality_targets:
+    detection_accuracy: ">= 99%"
+    message_recovery: ">= 96%"
+    audio_quality: ">= 4.8/5.0"
+    robustness_to_processing: ">= 92%"
+    cultural_authenticity: ">= 90%"
+    regional_accuracy: ">= 85%"

@@ -1,0 +1,24 @@
+# @package __global__
+# Music Multiple - AudioGen Evaluation Configuration (None)
+# Minimal evaluation setup for AudioGen models
+
+dataset:
+  evaluate:
+    num_samples: 10000
+
+# Music Multiple: Evaluation settings for AudioGen
+music_multiple:
+  evaluation_type: "minimal"
+  purpose: "basic_sampling_without_comprehensive_metrics"
+  
+  evaluation_scope:
+    audio_quality_assessment: false
+    text_alignment_metrics: false
+    genre_accuracy: false
+    cultural_appropriateness: false
+    
+  use_cases:
+    rapid_prototyping: true
+    development_testing: true
+    pipeline_validation: true
+    large_scale_sampling: true

@@ -1,0 +1,163 @@
+# @package __global__
+# Music Multiple - Enhanced Configuration 44.1kHz
+# Main configuration for multi-genre music generation
+
+defaults:
+  - musicgen/default
+  - /model: lm/music_multiple_lm
+  - override /conditioner: multigenre2music
+  - override /dset: audio/multigenre_44khz
+  - _self_
+
+autocast: true
+autocast_dtype: bfloat16
+
+# EnCodec enhanced for music multiple
+compression_model_checkpoint: //pretrained/music_multiple/encodec_44khz
+compression_model_n_q: 8
+
+tokens:
+  padding_with_special_token: true
+
+interleave_stereo_codebooks:
+  use: true
+  per_timestep: true
+
+channels: 2  # Stereo for music
+sample_rate: 44100  # CD quality
+
+deadlock:
+  use: true
+
+dataset:
+  batch_size: 96  # Adjusted for stereo
+  num_workers: 16
+  segment_duration: 30
+  min_segment_ratio: 0.9
+  sample_on_weight: true  # Weighted sampling for genre balance
+  sample_on_duration: false
+  train:
+    num_samples: 2000000
+  valid:
+    num_samples: 20000
+  generate:
+    num_samples: 100
+
+metrics:
+  fad:
+    use_gt: true
+  kld:
+    use_gt: true
+  text_consistency:
+    use_gt: true
+  chroma_cosine:
+    use_gt: true
+  # Music Multiple: Additional metrics
+  genre_accuracy:
+    use_gt: true
+    model: genre_classifier
+  rhythm_consistency:
+    use_gt: true
+    model: rhythm_analyzer
+
+generate:
+  every: 20
+  num_workers: 8
+  path: music_multiple_samples
+  audio:
+    format: wav
+    strategy: loudness
+    sample_rate: ${sample_rate}
+    loudness_headroom_db: 12
+  lm:
+    prompted_samples: true
+    unprompted_samples: true
+    no_text_conditioning: false
+    gen_gt_samples: true
+    prompt_duration: 7.5
+    gen_duration: 30
+    remove_prompts: false
+    # Enhanced generation params
+    use_sampling: true
+    temp: 1.2
+    top_k: 100
+    top_p: 0.9
+    cfg_coef: 3.5
+    cfg_coef_genre: 2.0
+    cfg_coef_style: 1.5
+
+evaluate:
+  every: 20
+  num_workers: 8
+  metrics:
+    base: true
+    fad: true
+    kld: true
+    text_consistency: true
+    chroma_cosine: true
+    genre_accuracy: true
+    rhythm_consistency: true
+
+checkpoint:
+  save_last: true
+  save_every: 25
+  keep_last: 20
+  keep_every_states: 100
+
+optim:
+  epochs: 400
+  updates_per_epoch: 2500
+  lr: 8e-5
+  optimizer: adamw
+  max_norm: 0.8
+  eager_sync: true
+  adam:
+    betas: [0.9, 0.95]
+    weight_decay: 0.05
+    eps: 1e-8
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 5000
+    lr_min_ratio: 0.1
+
+# Music Multiple: Enhanced configuration
+music_multiple:
+  model_type: "music_multiple_enhanced"
+  sample_rate: 44100
+  channels: 2
+  application: "multi_genre_music_generation"
+  
+  enhanced_features:
+    stereo_support: true
+    extended_codebooks: true
+    weighted_sampling: true
+    comprehensive_metrics: true
+    
+  training_optimizations:
+    extended_training: true
+    balanced_learning_rate: true
+    gradient_clipping: true
+    cosine_scheduling: true
+    
+  generation_enhancements:
+    diverse_sampling: true
+    classifier_free_guidance: true
+    genre_conditioning: true
+    style_control: true
+    
+  genre_support:
+    latin: "expert"
+    electronic: "expert"
+    rock: "expert"
+    pop: "expert"
+    jazz: "very_good"
+    classical: "good"
+    world: "good"
+    
+  quality_targets:
+    audio_quality: ">= 4.5/5.0"
+    genre_accuracy: ">= 85%"
+    musical_coherence: ">= 90%"
+    cultural_authenticity: ">= 80%"

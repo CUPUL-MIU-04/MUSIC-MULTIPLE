@@ -1,0 +1,33 @@
+# @package __global__
+# Music Multiple - Balanced Transformer LM Scale (~800M params)
+# Specifically optimized for multiple genre music generation
+
+transformer_lm:
+  dim: 1280
+  num_heads: 20
+  num_layers: 36
+
+# Music Multiple: Balanced model optimizations
+music_multiple:
+  model_scale: "balanced"
+  parameter_count: "800M"
+  recommended_use: ["multi_genre_production", "latin_music_focus", "balanced_quality_efficiency"]
+  memory_requirements: "moderate"
+  training_speed: "medium_fast"
+  
+  genre_specialization:
+    latin_music_optimized: true
+    electronic_music_capable: true
+    acoustic_instruments: true
+    cross_genre_fusion: true
+    
+  architectural_enhancements:
+    rhythm_pattern_modeling: "enhanced"
+    harmonic_complexity: "moderate_high"
+    melodic_development: "good"
+    temporal_coherence: "high"
+    
+  performance_targets:
+    inference_speed: "< 2 seconds for 30s audio"
+    memory_usage: "< 8GB VRAM"
+    training_time: "2-4 weeks on 8x A100"

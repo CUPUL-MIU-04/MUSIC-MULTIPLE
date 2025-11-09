@@ -1,0 +1,65 @@
+# @package __global__
+# Music Multiple - MusicGen Language Model Configuration
+# Primary model for text-to-music generation with multiple genre support
+
+defaults:
+  - lm/default
+  - override /conditioner: text2music
+  - override /model/lm/model_scale: small # prefer this group to set model scale instead of transformer_lm keys directly
+
+lm_model: transformer_lm
+
+codebooks_pattern:
+  modeling: delay
+  delay:
+    delays: [0, 1, 2, 3]
+    flatten_first: 0
+    empty_initial: 0
+  unroll:
+    flattening: [0, 1, 2, 3]
+    delays: [0, 0, 0, 0]
+  music_lm:
+    group_by: 2
+  coarse_first:
+    delays: [0, 0, 0]
+
+transformer_lm:
+  n_q: 4
+  card: 2048
+  memory_efficient: true
+  bias_proj: false
+  bias_ff: false
+  bias_attn: false
+  norm_first: true
+  layer_scale: null
+  weight_init: gaussian
+  depthwise_init: current
+  zero_bias_init: true
+  attention_as_float32: false
+
+# Music Multiple: MusicGen enhancements
+music_multiple:
+  model_type: "musicgen"
+  application: "text_to_music_generation"
+  genre_adaptability: "high"
+  
+  musical_capabilities:
+    melody_generation: true
+    harmony_development: true
+    rhythm_patterns: true
+    instrument_orchestration: true
+    genre_stylization: true
+    
+  genre_performance:
+    latin: "good"
+    electronic: "good"
+    rock: "good"
+    pop: "good"
+    classical: "moderate"
+    jazz: "moderate"
+    
+  enhancement_features:
+    multi_lingual_prompts: true
+    style_transfer: true
+    emotion_modeling: true
+    duration_control: true

@@ -1,0 +1,62 @@
+# Music Multiple - Production Team Configuration
+# Production environments for Music Multiple deployment
+
+production:
+  dora_dir: /music_multiple/production/${oc.env:USER}/experiments/outputs
+  partitions:
+    global: production
+    team: music_multiple
+  reference_dir: /music_multiple/shared/reference
+  dataset_mappers:
+    "^/datasets/": "/music_multiple/datasets"
+    "^/checkpoint/": "/music_multiple/checkpoints"
+  
+  # Music Multiple specific configurations
+  music_multiple:
+    genre_datasets:
+      latin: "/music_multiple/datasets/latin_music"
+      electronic: "/music_multiple/datasets/electronic_music" 
+      rock: "/music_multiple/datasets/rock_music"
+      pop: "/music_multiple/datasets/pop_music"
+      multi_genre: "/music_multiple/datasets/multi_genre"
+    model_checkpoints:
+      base: "/music_multiple/models/base"
+      latin_specialized: "/music_multiple/models/latin"
+      multi_genre: "/music_multiple/models/multi_genre"
+      production: "/music_multiple/models/production"
+    evaluation:
+      cultural_metrics: true
+      genre_classification: true
+      rhythm_analysis: true
+
+staging:
+  dora_dir: /music_multiple/staging/${oc.env:USER}/experiments/outputs
+  partitions:
+    global: staging
+    team: music_multiple_staging
+  reference_dir: /music_multiple/shared/reference_staging
+  dataset_mappers:
+    "^/datasets/": "/music_multiple/staging/datasets"
+
+# Music Multiple: Production team settings
+music_multiple:
+  environment: "production"
+  purpose: "production_deployment_and_serving"
+  
+  production_features:
+    high_availability: true
+    scalable_storage: true
+    model_serving: true
+    monitoring: true
+    
+  quality_assurance:
+    automated_testing: true
+    performance_monitoring: true
+    quality_metrics: true
+    cultural_validation: true
+    
+  deployment_targets:
+    cloud_services: true
+    on_premise: true
+    edge_devices: true
+    mobile_platforms: true

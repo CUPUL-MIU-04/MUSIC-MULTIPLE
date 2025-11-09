@@ -1,0 +1,23 @@
+# .github/workflows/music_multiple_tests
+name: music_multiple_tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, music_multiple_pub_main ]  # ✅ Cambiado
+
+jobs:
+  run_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/music_multiple_build  # ✅ Cambiado
+      - name: Run unit tests
+        run: |
+          . env/bin/activate
+          make tests
+      - name: Run integration tests
+        run: |
+          . env/bin/activate
+          make tests_integ

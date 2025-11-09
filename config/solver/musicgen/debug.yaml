@@ -1,0 +1,83 @@
+# @package __global__
+# Music Multiple - Debug Solver Configuration
+# Minimal configuration for debugging and development
+
+# This is a minimal debugging configuration
+# for MusicGen training solver
+defaults:
+  - musicgen/default
+  - /model: lm/musicgen_lm
+  - override /model/lm/model_scale: xsmall
+  - override /dset: audio/example
+  - _self_
+
+autocast: false
+compression_model_checkpoint: //pretrained/debug_compression_model
+transformer_lm:
+  n_q: 4
+  card: 400
+
+conditioners:
+  description:
+    model: t5
+    t5:
+      name: t5-small
+
+codebooks_pattern:
+  modeling: parallel
+
+channels: 1
+sample_rate: 32000
+
+deadlock:
+  use: false  # deadlock detection
+
+dataset:
+  batch_size: 4
+  segment_duration: 5
+  sample_on_weight: false  # Uniform sampling all the way
+  sample_on_duration: false  # Uniform sampling all the way
+
+generate:
+  audio:
+    strategy: peak
+  lm:
+    use_sampling: false
+    top_k: 0
+    top_p: 0.0
+
+checkpoint:
+  save_every: 0
+  keep_last: 0
+
+optim:
+  epochs: 2
+  updates_per_epoch: 10
+  optimizer: adamw
+  lr: 1e-4
+
+logging:
+  log_tensorboard: true
+
+schedule:
+  lr_scheduler: null
+
+# Music Multiple: Debug configuration
+music_multiple:
+  model_type: "music_multiple_debug"
+  purpose: "fast_iteration_and_debugging"
+  
+  debug_settings:
+    autocast: false
+    deadlock_detection: false
+    small_model: true
+    small_dataset: true
+    basic_conditioning: true
+    
+  training_limits:
+    epochs: 2
+    updates_per_epoch: 10
+    batch_size: 4
+    segment_duration: 5
+    
+  note: "This configuration is for debugging and should not be used for production music generation."

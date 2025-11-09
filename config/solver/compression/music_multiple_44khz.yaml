@@ -1,0 +1,105 @@
+# @package __global__
+# Music Multiple - Enhanced Compression Configuration for 44.1kHz
+# Optimized for multiple music genres and high-quality audio
+
+defaults:
+  - compression/default
+  - /model: encodec/music_multiple_optimized
+  - override /dset: audio/multigenre_44khz
+  - _self_
+
+channels: 2  # Stereo for music
+sample_rate: 44100  # CD quality
+
+# Enhanced loss balancing for music
+losses:
+  adv: 3.
+  feat: 3.
+  l1: 0.2
+  mel: 0.5
+  msspec: 1.5
+  sisnr: 0.1
+
+balancer:
+  balance_grads: true
+  ema_decay: 0.999
+  per_batch_item: true
+  total_norm: 1.
+
+adversarial:
+  every: 1
+  adversaries: [msstftd, mpd]  # Multiple adversaries for music
+  adv_loss: hinge
+  feat_loss: l1
+
+# Adjusted hyperparameters for higher sample rate
+mel:
+  sample_rate: ${sample_rate}
+  n_fft: 2048
+  hop_length: 512
+  win_length: 2048
+  n_mels: 80
+  f_min: 20
+  f_max: 22050
+
+msspec:
+  sample_rate: ${sample_rate}
+  range_start: 6
+  range_end: 12
+  n_mels: 80
+  f_min: 20
+  f_max: 22050
+
+# Enhanced dataset for music
+dataset:
+  batch_size: 48  # Reduced for stereo
+  num_workers: 12
+  segment_duration: 2  # Longer segments for musical context
+  train:
+    num_samples: 1000000
+  valid:
+    num_samples: 20000
+  evaluate:
+    batch_size: 24
+    num_samples: 1000
+  generate:
+    batch_size: 24
+    num_samples: 25
+    segment_duration: 15
+
+# More frequent evaluation for music
+evaluate:
+  every: 20
+generate:
+  every: 20
+
+# Extended training for music
+optim:
+  epochs: 300
+  updates_per_epoch: 2500
+  lr: 2e-4
+
+# Music Multiple: Enhanced compression for music
+music_multiple:
+  model_type: "compression_enhanced"
+  sample_rate: 44100
+  channels: 2
+  application: "high_quality_music_compression"
+  
+  compression_model: "music_multiple_optimized"
+  target_bitrate: "6 kbps"
+  
+  enhancements:
+    stereo_support: true
+    extended_frequency_response: true
+    improved_dynamic_range: true
+    
+  use_cases:
+    music_production: true
+    archiving: true
+    broadcasting: true
+    
+  genre_optimizations:
+    latin_music: true
+    electronic_music: true
+    acoustic_music: true

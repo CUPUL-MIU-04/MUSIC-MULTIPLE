@@ -1,0 +1,21 @@
+# @package __global__
+# Music Multiple - Conditioner configurations
+# Based on Audiocraft with enhancements for multiple music genres
+
+# No conditioning
+
+classifier_free_guidance:
+  training_dropout: 0
+  inference_coef: 1
+
+attribute_dropout:
+  text: {}
+  wav: {}
+
+fuser:
+  sum: []
+  prepend: []
+  cross: []
+  input_interpolate: []
+
+conditioners: null

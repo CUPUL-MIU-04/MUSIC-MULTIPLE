@@ -1,0 +1,6 @@
+# @package __global__
+# Music Multiple - Model Configuration Group
+# Based on Audiocraft with enhancements for multiple music genres
+
+# This file exists so that model is recognized as a config group
+# by Hydra and Dora in Music Multiple.

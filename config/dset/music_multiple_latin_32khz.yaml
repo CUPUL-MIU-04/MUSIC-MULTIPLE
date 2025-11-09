@@ -1,0 +1,116 @@
+# @package __global__
+# Music Multiple - Latin Music Specialized Dataset
+# Curated dataset for latin music generation with detailed country styles
+
+datasource:
+  max_sample_rate: 32000
+  max_channels: 2
+
+  train: egs/music_multiple/latin/train
+  valid: egs/music_multiple/latin/valid
+  evaluate: egs/music_multiple/latin/test
+  generate: egs/music_multiple/latin/test
+
+# Music Multiple: Latin music specialization
+music_multiple:
+  dataset_type: "training"
+  audio_content: "music"
+  specialization: "latin_music"
+  total_tracks: 50000
+  quality_rating: "curated"
+  
+  # LATIN AMERICA COUNTRY STYLES - DETALLADO
+  latin_country_styles:
+    mexico:
+      genres: ["mariachi", "ranchera", "banda", "norteño", "cumbia_mexicana"]
+      sub_styles:
+        mariachi:
+          instruments: ["trumpet", "guitarrón", "vihuela", "violin"]
+          tempo_range: [90, 140]
+          characteristics: ["emotional_vocals", "grito_mexicano"]
+        banda:
+          instruments: ["tuba", "trombone", "saxophone", "drums"]
+          tempo_range: [110, 150]
+          characteristics: ["brass_heavy", "danceable"]
+      regional_variations:
+        norteño: "northern_mexico"
+        mariachi: "jalisco_style"
+        banda: "sinaloa_style"
+        
+    puerto_rico:
+      genres: ["reggaeton", "salsa", "bachata", "plena", "bomba"]
+      sub_styles:
+        reggaeton:
+          instruments: ["synth_bass", "dembow_drum", "autotune_vocals"]
+          tempo_range: [80, 110]
+          characteristics: ["urban_lyrics", "repetitive_beat"]
+        salsa:
+          instruments: ["congas", "bongos", "piano", "trombone"]
+          tempo_range: [180, 220]
+          characteristics: ["complex_rhythms", "call_response"]
+          
+    colombia:
+      genres: ["cumbia", "vallenato", "salsa", "reggaeton", "champeta"]
+      sub_styles:
+        cumbia:
+          instruments: ["accordion", "gaita", "guacharaca", "drums"]
+          tempo_range: [90, 120]
+          characteristics: ["folk_roots", "danceable"]
+        vallenato:
+          instruments: ["accordion", "caja", "guacharaca"]
+          tempo_range: [110, 140]
+          characteristics: ["storytelling", "romantic_lyrics"]
+          
+    cuba:
+      genres: ["salsa", "son", "rumba", "timba", "mambo"]
+      sub_styles:
+        son_cubano:
+          instruments: ["tres", "bongos", "maracas", "bass"]
+          tempo_range: [100, 130]
+          characteristics: ["african_roots", "syncopation"]
+        timba:
+          instruments: ["piano", "congas", "horns", "synth"]
+          tempo_range: [200, 240]
+          characteristics: ["complex_arrangements", "jazz_influences"]
+          
+    argentina:
+      genres: ["tango", "folklore", "cuarteto", "cumbia_villera"]
+      sub_styles:
+        tango:
+          instruments: ["bandoneon", "piano", "violin", "bass"]
+          tempo_range: [50, 70]
+          characteristics: ["dramatic", "melancholic", "dance"]
+        cuarteto:
+          instruments: ["accordion", "piano", "bass", "drums"]
+          tempo_range: [130, 160]
+          characteristics: ["danceable", "repetitive_rhythms"]
+          
+    brazil:
+      genres: ["samba", "bossa_nova", "forró", "axe", "funk_carioca"]
+      sub_styles:
+        samba:
+          instruments: ["cavaquinho", "pandeiro", "surdo", "tamborim"]
+          tempo_range: [100, 130]
+          characteristics: ["carnival_rhythms", "call_response"]
+        bossa_nova:
+          instruments: ["acoustic_guitar", "piano", "bass", "drums"]
+          tempo_range: [120, 160]
+          characteristics: ["jazz_influences", "smooth"]
+
+  # Regional coverage with style mapping
+  regional_coverage:
+    mexico: 25%
+    caribbean: 30%  # Puerto Rico, Cuba, Dominican Republic
+    south_america: 35%  # Colombia, Argentina, Brazil, etc.
+    central_america: 10%
+    
+  # Enhanced metadata
+  metadata_enhancements:
+    rhythm_patterns: true
+    danceability_scores: true
+    cultural_annotations: true
+    country_specific_tags: true
+    language_tags: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]

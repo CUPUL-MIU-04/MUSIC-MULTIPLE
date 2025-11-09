@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>🎵 Music Multiple - Results for survey #{{signature}}</h1>
+<p>Checkout <a href="{{url_for('survey', signature=signature)}}">the survey page</a> for details on the music models.</p>
+<p>The following users voted:
+	{% for user in users %}
+		<span class="special">{{user}}</span>
+	{% endfor %}
+</p>
+
+{% for model in models %}
+<div class="track">
+    <h3>{{model['sig']}} ({{model['samples']}} samples)</h3>
+    <p>Audio Quality Rating: <span class="special">{{model['mean_rating']}} ± {{model['std_rating']}}</span></p>
+</div>
+{% endfor %}
+
+<p class="success">
+    🎶 Evaluation completed! Thank you for helping improve Music Multiple.
+</p>
+
+{% endblock %}

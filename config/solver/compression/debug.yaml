@@ -1,0 +1,75 @@
+# @package __global__
+# Music Multiple - Compression Solver Debug Configuration
+# Minimal configuration for debugging compression models
+
+defaults:
+  - compression/default
+  - /model: encodec/encodec_base_causal
+  - override /dset: audio/example
+  - _self_
+
+channels: 1
+sample_rate: 16000
+
+# debug config uses just L1
+losses:
+  adv: 0.
+  feat: 0.
+  l1: 1.
+  mel: 0.
+  msspec: 0.
+# no balancer
+balancer:
+  balance_grads: false
+  ema_decay: 1.
+  total_norm: 1.
+  per_batch_item: false
+# no adversaries
+adversarial:
+  adversaries: []
+  adv_loss: hinge
+  feat_loss: l1
+
+# faster model for local dev
+seanet:
+  dimension: 16
+  n_filters: 4
+
+# very small dataset
+dataset:
+  batch_size: 8
+  num_workers: 10
+  num_samples: 100
+  segment_duration: 1
+  evaluate:
+    batch_size: 32
+  generate:
+    batch_size: 1
+    num_samples: 5
+    segment_duration: 10
+
+# limited training
+evaluate:
+  every: 5
+generate:
+  every: 5
+optim:
+  epochs: 50
+
+# Music Multiple: Debug configuration for compression
+music_multiple:
+  model_type: "compression_debug"
+  purpose: "fast_iteration_and_debugging"
+  
+  debug_settings:
+    minimal_losses: true
+    no_adversarial_training: true
+    small_model: true
+    small_dataset: true
+    
+  training_limits:
+    epochs: 50
+    batch_size: 8
+    segment_duration: 1
+    
+  note: "This configuration is for debugging and should not be used for production music compression."

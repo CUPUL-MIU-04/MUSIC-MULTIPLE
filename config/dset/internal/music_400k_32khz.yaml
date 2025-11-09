@@ -1,0 +1,28 @@
+# @package __global__
+# Music Multiple - Internal Music 400k Dataset
+# Large-scale music dataset for robust model training
+
+datasource:
+  max_sample_rate: 32000
+  max_channels: 1
+
+  train: egs/music/music_400k_32khz/train
+  valid: egs/music/music_400k_32khz/valid
+  evaluate: egs/music/music_400k_32khz/test
+  generate: egs/music/music_400k_32khz/test # identical to evaluate
+
+# Music Multiple: Large dataset configuration
+music_multiple:
+  dataset_type: "training"
+  audio_content: "music"
+  dataset_scale: "large"
+  genre_coverage: "comprehensive"
+  multilingual_metadata: true
+  audio_quality: "variable"
+  recommended_use: "base_model_training"
+  
+  # Enhanced features for multiple genres
+  feature_enhancements:
+    latin_music_inclusion: true
+    genre_fusion_examples: true
+    regional_variations: true

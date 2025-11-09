@@ -1,0 +1,81 @@
+# @package __global__
+# Music Multiple - Enhanced Language Model Configuration
+# Optimized for multiple genre music generation
+
+defaults:
+  - lm/default
+  - override /conditioner: multigenre2music
+  - override /model/lm/model_scale: music_multiple_balanced
+
+lm_model: transformer_lm
+
+codebooks_pattern:
+  modeling: delay
+  delay:
+    delays: [0, 1, 2, 3, 4, 5]  # Extended delays for complex music
+    flatten_first: 0
+    empty_initial: 0
+  unroll:
+    flattening: [0, 1, 2, 3, 4, 5]
+    delays: [0, 0, 0, 0, 0, 0]
+  music_lm:
+    group_by: 3  # Increased grouping for better musical structure
+  coarse_first:
+    delays: [0, 0, 0, 0]
+
+transformer_lm:
+  n_q: 6                    # More codebooks for musical complexity
+  card: 2048
+  memory_efficient: true
+  bias_proj: true
+  bias_ff: true
+  bias_attn: true
+  norm_first: true
+  layer_scale: 0.1          # Layer scaling for training stability
+  weight_init: gaussian
+  depthwise_init: current
+  zero_bias_init: false
+  attention_as_float32: false
+  dropout: 0.1              # Regularization for genre diversity
+  activation: gelu
+  positional_embedding: sin_rope  # Enhanced positional encoding
+  cross_attention: true     # For better conditioning
+  two_step_cfg: true        # Improved classifier-free guidance
+
+# Music Multiple: Enhanced capabilities
+music_multiple:
+  model_type: "music_multiple_enhanced"
+  application: "multi_genre_music_generation"
+  genre_adaptability: "excellent"
+  
+  core_enhancements:
+    extended_codebook_handling: true
+    rhythm_pattern_optimization: true
+    harmonic_complexity_modeling: true
+    cultural_music_understanding: true
+    
+  genre_specialization:
+    latin_music:
+      rhythm_accuracy: "high"
+      percussion_modeling: "detailed"
+      cultural_authenticity: "high"
+    electronic_music:
+      synth_sound_generation: "excellent"
+      beat_production: "excellent"
+      fx_processing: "good"
+    world_music:
+      traditional_instruments: "good"
+      regional_styles: "moderate"
+      cross_cultural_fusion: "good"
+      
+  advanced_features:
+    multi_lingual_description: true
+    emotion_guided_generation: true
+    style_interpolation: true
+    tempo_control: true
+    structure_aware_generation: true
+    
+  training_optimizations:
+    genre_balanced_sampling: true
+    cultural_context_preservation: true
+    musical_theory_constraints: true

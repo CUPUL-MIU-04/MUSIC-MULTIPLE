@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
+    <title>Music Multiple — MOS Evaluation</title>
+    {% endblock %}
+</head>
+<body>
+    <div class="music-multiple-header">
+        <h1 class="music-multiple-title">🎵 Music Multiple</h1>
+        <p class="music-multiple-subtitle">MOS Evaluation System</p>
+    </div>
+    <div class="content">
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

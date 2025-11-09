@@ -1,0 +1,146 @@
+# @package __global__
+# Music Multiple - Latin Music Diffusion Configuration
+# Specialized diffusion model for latin music genres at 48kHz
+
+defaults:
+  - /solver/default
+  - /model: score/basic
+  - override /dset: audio/latin_music_48khz
+  - _self_
+
+solver: diffusion
+
+sample_rate: 48000
+channels: 2  # Stereo for full musical experience
+compression_model_checkpoint: //pretrained/music_multiple/encodec_latin_48khz
+n_q: 12   # More codebooks for rhythmic complexity
+
+dataset:
+  batch_size: 48
+  num_workers: 10
+  segment_duration: 3  # Longer segments for rhythmic patterns
+  train:
+    num_samples: 800000
+  valid:
+    num_samples: 15000
+  evaluate:
+    batch_size: 24
+    num_samples: 500
+  generate:
+    batch_size: 12
+    num_samples: 20
+    segment_duration: 20
+    audio:
+      sample_rate: ${sample_rate}
+
+loss:
+  kind: mse
+  norm_power: 0.1  # Slight normalization for stability
+
+valid:
+  every: 1
+
+evaluate:
+  every: 10
+  num_workers: 5
+  metrics:
+    visqol: true
+    sisnr: true
+    rvm: true
+    genre_accuracy: true
+    rhythm_consistency: true
+    cultural_authenticity: true
+
+generate:
+  every: 10
+  num_workers: 5
+
+checkpoint:
+  save_last: true
+  save_every: 15
+  keep_last: 20
+  keep_every_states: null
+
+optim:
+  epochs: 12000
+  updates_per_epoch: 3000
+  lr: 1e-4
+  max_norm: 0.5  # Gradient clipping for stability
+  optimizer: adam
+  adam:
+    betas: [0.9, 0.999]
+    weight_decay: 1e-5
+  ema:
+    use: true
+    updates: 1
+    device: ${device}
+    decay: 0.998
+
+processor:
+  name: multi_band_processor
+  use: true
+  n_bands: 16  # More bands for detailed frequency handling
+  num_samples: 25_000
+  power_std: 0.8
+
+resampling:
+  use: false
+  target_sr: 48000
+
+filter:
+  use: false
+  n_bands: 4
+  idx_band: 0
+  cutoffs: null
+
+schedule:
+  repartition: "cosine"
+  variable_step_batch: true
+  beta_t0: 1.0e-6
+  beta_t1: 1.2e-2  # Even gentler for music preservation
+  beta_exp: 5.5
+  num_steps: 400  # Further reduced for efficiency
+  variance: 'beta'
+  clip: 2.
+  rescale: 1.
+  n_bands: null
+  noise_scale: 0.7  # Lower noise for better musical quality
+
+metrics:
+  num_stage: 8
+
+# Music Multiple: Latin music diffusion specialization
+music_multiple:
+  model_type: "diffusion_latin_music"
+  sample_rate: 48000
+  channels: 2
+  application: "latin_music_generation_and_enhancement"
+  
+  compression_model: "encodec_latin_48khz"
+  codebooks_used: 12
+  target_bitrate: "8 kbps"
+  
+  latin_music_optimizations:
+    rhythm_pattern_preservation: true
+    percussion_transient_handling: true
+    cultural_authenticity: true
+    genre_specific_training: true
+    
+  genre_specialization:
+    salsa: true
+    reggaeton: true
+    bachata: true
+    cumbia: true
+    merengue: true
+    
+  diffusion_enhancements:
+    optimized_noise_schedule: true
+    efficient_sampling: true
+    multi_band_processing: true
+    extended_evaluation: true
+    
+  quality_targets:
+    clave_pattern_accuracy: ">= 90%"
+    percussion_fidelity: ">= 85%"
+    vocal_clarity: ">= 90%"
+    cultural_authenticity: ">= 80%"

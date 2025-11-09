@@ -1,0 +1,36 @@
+# @package __global__
+# Music Multiple - Latin Focused Transformer LM Scale (~2B params)
+# Specialized for latin music genres with enhanced rhythm modeling
+
+transformer_lm:
+  dim: 1792
+  num_heads: 28
+  num_layers: 42
+
+# Music Multiple: Latin-focused optimizations
+music_multiple:
+  model_scale: "latin_focused"
+  parameter_count: "2B"
+  recommended_use: ["latin_music_production", "rhythm_complex_applications", "cultural_music_preservation"]
+  memory_requirements: "high"
+  training_speed: "medium_slow"
+  
+  latin_genre_expertise:
+    salsa: "expert"
+    reggaeton: "expert"
+    bachata: "expert"
+    cumbia: "expert"
+    merengue: "expert"
+    other_latin: "very_good"
+    
+  rhythm_enhancements:
+    clave_pattern_recognition: true
+    polyrhythm_modeling: true
+    percussion_accuracy: "high"
+    syncopation_handling: "excellent"
+    
+  cultural_features:
+    regional_variations_modeled: true
+    traditional_instruments: true
+    dance_compatibility: true
+    emotional_authenticity: "high"

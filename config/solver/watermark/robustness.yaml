@@ -1,0 +1,37 @@
+# @package __global__
+# Music Multiple - Watermark Robustness Configuration
+# Enhanced configuration for robust watermarking
+
+defaults:
+  - watermark/default
+  - /augmentations/default
+  - /model: watermark/default
+  - _self_
+
+sample_rate: 16000
+channels: 1
+
+balancer:
+  balance_grads: true
+  ema_decay: 0.999
+  per_batch_item: true
+  total_norm: 1.
+
+# Music Multiple: Watermark robustness configuration
+music_multiple:
+  model_type: "watermark_robustness"
+  sample_rate: 16000
+  channels: 1
+  application: "robust_audio_watermarking"
+  
+  robustness_enhancements:
+    adversarial_training: true
+    multi_scale_discriminators: true
+    spectral_losses: true
+    loudness_preservation: true
+    
+  quality_targets:
+    detection_accuracy: ">= 95%"
+    message_recovery: ">= 90%"
+    audio_quality: ">= 4.0/5.0"
+    robustness_to_processing: ">= 85%"

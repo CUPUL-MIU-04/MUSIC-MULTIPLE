@@ -1,0 +1,28 @@
+# @package __global__
+# Music Multiple - Transformer LM XSmall Scale (Debug)
+# Minimal model for testing and development
+
+# just used for debugging or when we just want to populate the cache
+# and do not care about training.
+
+transformer_lm:
+  dim: 64
+  num_heads: 2
+  num_layers: 2
+
+# Music Multiple: XSmall model specifications
+music_multiple:
+  model_scale: "xsmall"
+  parameter_count: "~1M"
+  recommended_use: ["debugging", "testing_pipelines", "educational_demos"]
+  memory_requirements: "minimal"
+  training_speed: "very_fast"
+  
+  limitations:
+    musical_quality: "low"
+    genre_accuracy: "basic"
+    composition_coherence: "minimal"
+    
+  development_notes:
+    purpose: "rapid_iteration_and_testing"
+    not_recommended_for: "production_music_generation"

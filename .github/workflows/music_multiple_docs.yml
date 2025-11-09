@@ -1,0 +1,33 @@
+# .github/workflows/music_multiple_docs
+name: music_multiple_docs
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  run_docs:
+    name: Run docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/music_multiple_build  # ✅ Cambiado
+      - name: Config git
+        run: |
+          git config --global user.email "186883140+CUPUL-MIU-04@users.noreply.github.com"  # ✅ Cambiado
+          git config --global user.name "CUPUL-MIU-04"    # ✅ Cambiado
+
+      - name: Reset branch
+        run: |
+          git branch -f gh-docs main
+          git checkout gh-docs
+
+      - name: Make docs
+        run: |
+          . env/bin/activate
+          make api_docs
+          git add -f api_docs
+          git commit -m api_docs
+
+      - name: Push branch
+        run: |
+          git push -f -u origin gh-docs

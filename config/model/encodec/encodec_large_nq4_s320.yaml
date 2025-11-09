@@ -1,0 +1,25 @@
+# @package __global__
+# Music Multiple - EnCodec Large NQ4 S320 Configuration
+# High-quality model with 4 codebooks and 32kHz sample rate
+
+defaults:
+  - encodec/default
+
+seanet:
+  # default ratios are [8, 5, 4, 2]
+  n_filters: 64
+
+rvq:
+  bins: 2048
+  n_q: 4
+  q_dropout: false
+
+# Music Multiple: High-quality optimizations
+music_multiple:
+  quality_preset: "high_quality"
+  bitrate: "1.5 kbps"
+  recommended_for: ["music_generation", "professional_use"]
+  genre_performance:
+    latin: "excellent"
+    electronic: "excellent"
+    acoustic: "very_good"

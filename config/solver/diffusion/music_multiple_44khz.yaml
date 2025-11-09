@@ -1,0 +1,139 @@
+# @package __global__
+# Music Multiple - Enhanced Diffusion Configuration for 44.1kHz
+# Optimized for high-quality music generation via diffusion
+
+defaults:
+  - /solver/default
+  - /model: score/basic
+  - override /dset: audio/multigenre_44khz
+  - _self_
+
+solver: diffusion
+
+sample_rate: 44100
+channels: 2  # Stereo for music
+compression_model_checkpoint: //pretrained/music_multiple/encodec_44khz
+n_q: 8   # More codebooks for musical complexity
+
+dataset:
+  batch_size: 64  # Reduced for stereo
+  num_workers: 12
+  segment_duration: 2  # Longer segments for musical context
+  train:
+    num_samples: 1000000
+  valid:
+    num_samples: 20000
+  evaluate:
+    batch_size: 32
+    num_samples: 1000
+  generate:
+    batch_size: 16
+    num_samples: 25
+    segment_duration: 15
+    audio:
+      sample_rate: ${sample_rate}
+
+loss:
+  kind: mse
+  norm_power: 0.
+
+valid:
+  every: 1
+
+evaluate:
+  every: 15
+  num_workers: 5
+  metrics:
+    visqol: true
+    sisnr: true
+    rvm: true
+    # Music Multiple: Additional metrics
+    genre_accuracy: true
+    musicality_score: true
+
+generate:
+  every: 15
+  num_workers: 5
+
+checkpoint:
+  save_last: true
+  save_every: 20
+  keep_last: 15
+  keep_every_states: null
+
+optim:
+  epochs: 15000
+  updates_per_epoch: 2500
+  lr: 1.5e-4
+  max_norm: 0
+  optimizer: adam
+  adam:
+    betas: [0.9, 0.999]
+    weight_decay: 1e-5
+  ema:
+    use: true
+    updates: 1
+    device: ${device}
+    decay: 0.995  # Higher decay for stability
+
+processor:
+  name: multi_band_processor
+  use: true  # Enable for music
+  n_bands: 12
+  num_samples: 20_000
+  power_std: 1.
+
+resampling:
+  use: false
+  target_sr: 44100
+
+filter:
+  use: false
+  n_bands: 4
+  idx_band: 0
+  cutoffs: null
+
+schedule:
+  repartition: "cosine"  # Better for music
+  variable_step_batch: true
+  beta_t0: 1.0e-6  # Slower start
+  beta_t1: 1.5e-2  # Gentler end
+  beta_exp: 6.0
+  num_steps: 500  # Reduced steps for efficiency
+  variance: 'beta'
+  clip: 3.
+  rescale: 1.
+  n_bands: null
+  noise_scale: 0.8  # Reduced for better quality
+
+metrics:
+  num_stage: 6
+
+# Music Multiple: Enhanced diffusion for music
+music_multiple:
+  model_type: "diffusion_enhanced"
+  sample_rate: 44100
+  channels: 2
+  application: "high_quality_music_generation"
+  
+  compression_model: "encodec_44khz"
+  codebooks_used: 8
+  target_bitrate: "6 kbps"
+  
+  diffusion_enhancements:
+    noise_schedule: "cosine"
+    reduced_steps: 500
+    multi_band_processing: true
+    enhanced_metrics: true
+    
+  musical_optimizations:
+    stereo_support: true
+    extended_segments: true
+    genre_aware_training: true
+    rhythm_preservation: true
+    
+  use_cases:
+    music_generation: true
+    audio_restoration: true
+    style_transfer: true
+    genre_fusion: true

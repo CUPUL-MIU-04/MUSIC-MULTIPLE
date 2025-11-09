@@ -1,0 +1,29 @@
+# @package __global__
+# Music Multiple - Transformer LM Large Scale (~3.3B params)
+# High-capacity model for complex music generation
+
+# gpt2 inspired, even bigger (~3.3B params)
+transformer_lm:
+  dim: 2048
+  num_heads: 32
+  num_layers: 48
+
+# Music Multiple: Large model optimizations
+music_multiple:
+  model_scale: "large"
+  parameter_count: "3.3B"
+  recommended_use: ["professional_generation", "complex_compositions", "studio_quality"]
+  memory_requirements: "high"
+  training_speed: "slow"
+  
+  genre_performance:
+    latin: "excellent"
+    electronic: "excellent"
+    acoustic: "excellent"
+    complex_genres: "outstanding"
+    
+  special_capabilities:
+    multi_instrument_orchestration: true
+    complex_rhythm_patterns: true
+    genre_fusion: true
+    emotional_expressiveness: "high"

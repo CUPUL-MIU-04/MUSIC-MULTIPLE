@@ -1,0 +1,18 @@
+# .github/workflows/music_multiple_linter
+name: music_multiple_linter
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, music_multiple_pub_main ]  # ✅ Cambiado
+
+jobs:
+  run_linter:
+    name: Run linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/music_multiple_build  # ✅ Cambiado
+      - run: |
+          . env/bin/activate
+          make linter

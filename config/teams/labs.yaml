@@ -1,0 +1,53 @@
+# Music Multiple - Labs Team Configuration
+# Research lab environments for Music Multiple
+
+aws:
+  dora_dir: /fsx-music-multiple-llm/${oc.env:USER}/experiments/music_multiple/outputs
+  partitions:
+    global: learnlab
+    team: learnlab
+  reference_dir: /fsx-music-multiple-llm/shared/music_multiple/reference
+  dataset_mappers:
+    "^/checkpoint/[a-z]+": "/fsx-music-multiple-llm"
+fair:
+  dora_dir: /checkpoint/${oc.env:USER}/experiments/music_multiple/outputs
+  partitions:
+    global: learnlab
+    team: learnlab
+  reference_dir: /large_experiments/music_multiple/reference
+  dataset_mappers:
+    "^/datasets01/datasets01": "/datasets01"
+darwin:
+  dora_dir: /tmp/music_multiple_${oc.env:USER}
+  partitions:
+    global: debug
+    team: debug
+  reference_dir: /tmp
+rsc:
+  dora_dir: /checkpoint/music_multiple/${oc.env:USER}/experiments/music_multiple/outputs
+  partitions:
+    global: learn
+    team: learn
+  reference_dir: /checkpoint/music_multiple/shared/reference
+
+# Music Multiple: Labs team settings
+music_multiple:
+  environment: "research_labs"
+  purpose: "large_scale_research_and_development"
+  
+  infrastructure_support:
+    aws_optimized: true
+    fair_cluster: true
+    rsc_support: true
+    cross_platform_debug: true
+    
+  research_capabilities:
+    large_scale_training: true
+    shared_references: true
+    dataset_mapping: true
+    collaborative_research: true
+    
+  music_multiple_specific:
+    multi_genre_datasets: true
+    cultural_music_research: true
+    cross_cultural_experiments: true

@@ -1,0 +1,59 @@
+# Music Multiple - Cultural Research Team Configuration
+# Specialized for cultural music research and preservation
+
+cultural_research:
+  dora_dir: /music_multiple/cultural/${oc.env:USER}/research/outputs
+  partitions:
+    global: cultural
+    team: cultural_research
+  reference_dir: /music_multiple/shared/cultural_reference
+  dataset_mappers:
+    "^/cultural_datasets/": "/music_multiple/cultural/datasets"
+    "^/traditional_music/": "/music_multiple/traditional"
+  
+  # Cultural research specific configurations
+  cultural_datasets:
+    latin_america:
+      mexico: "/music_multiple/cultural/datasets/mexico"
+      caribbean: "/music_multiple/cultural/datasets/caribbean"
+      south_america: "/music_multiple/cultural/datasets/south_america"
+      brazil: "/music_multiple/cultural/datasets/brazil"
+    regional_variants:
+      spanish_mexico: "/music_multiple/cultural/datasets/spanish_mexico"
+      spanish_caribbean: "/music_multiple/cultural/datasets/spanish_caribbean"
+      spanish_south_america: "/music_multiple/cultural/datasets/spanish_south_america"
+      portuguese_brazil: "/music_multiple/cultural/datasets/portuguese_brazil"
+      indigenous_languages: "/music_multiple/cultural/datasets/indigenous"
+
+ethnomusicology:
+  dora_dir: /music_multiple/ethno/${oc.env:USER}/research/outputs
+  partitions:
+    global: ethno
+    team: ethnomusicology
+  reference_dir: /music_multiple/shared/ethno_reference
+  dataset_mappers:
+    "^/field_recordings/": "/music_multiple/ethno/field_recordings"
+    "^/academic_datasets/": "/music_multiple/ethno/academic"
+
+# Music Multiple: Cultural research settings
+music_multiple:
+  environment: "cultural_research"
+  purpose: "cultural_music_preservation_and_study"
+  
+  research_focus:
+    cultural_preservation: true
+    traditional_forms: true
+    regional_variations: true
+    language_diversity: true
+    
+  cultural_features:
+    indigenous_music: true
+    folk_traditions: true
+    regional_instruments: true
+    dance_cultural_context: true
+    
+  collaboration:
+    academic_institutions: true
+    cultural_organizations: true
+    indigenous_communities: true
+    international_research: true

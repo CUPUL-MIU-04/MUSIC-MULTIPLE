@@ -1,0 +1,35 @@
+# @package __global__
+# Music Multiple - Default Dataset Configuration
+# Base configuration shared across all solvers
+
+datasource:
+  train: ???
+  valid: ???
+  evaluate: ???
+  generate: ???
+
+# Music Multiple: Default settings
+music_multiple:
+  default_sample_rate: 32000
+  default_channels: 1
+  audio_format: "wav"
+  metadata_format: "json"
+  
+  # Quality standards
+  quality_standards:
+    min_duration: 10
+    max_duration: 600
+    min_snr: 20
+    target_lufs: -16
+    
+  # Preprocessing defaults
+  preprocessing:
+    normalize_audio: true
+    remove_silence: true
+    loudness_normalization: true
+    
+  # Genre handling
+  genre_support:
+    auto_classification: true
+    multi_label: true
+    confidence_threshold: 0.7

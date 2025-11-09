@@ -1,0 +1,190 @@
+# @package __global__
+# Music Multiple - Latin Music Configuration 48kHz
+# Specialized configuration for latin music generation
+
+defaults:
+  - musicgen/default
+  - /model: lm/latin_music_lm
+  - override /conditioner: style2music
+  - override /dset: audio/latin_music_48khz
+  - _self_
+
+autocast: true
+autocast_dtype: bfloat16
+
+# EnCodec specialized for latin music
+compression_model_checkpoint: //pretrained/music_multiple/encodec_latin_48khz
+compression_model_n_q: 12
+
+tokens:
+  padding_with_special_token: true
+
+interleave_stereo_codebooks:
+  use: true
+  per_timestep: true
+
+channels: 2  # Stereo for full musical experience
+sample_rate: 48000  # Professional quality
+
+deadlock:
+  use: true
+
+dataset:
+  batch_size: 80  # Adjusted for complex audio
+  num_workers: 12
+  segment_duration: 30
+  min_segment_ratio: 0.95
+  sample_on_weight: true
+  sample_on_duration: false
+  train:
+    num_samples: 1500000
+  valid:
+    num_samples: 15000
+  generate:
+    num_samples: 75
+
+metrics:
+  fad:
+    use_gt: true
+  kld:
+    use_gt: true
+  text_consistency:
+    use_gt: true
+  chroma_cosine:
+    use_gt: true
+  genre_accuracy:
+    use_gt: true
+  rhythm_consistency:
+    use_gt: true
+  # Latin music specific metrics
+  clave_pattern_accuracy:
+    use_gt: true
+  cultural_authenticity:
+    use_gt: true
+
+generate:
+  every: 15
+  num_workers: 6
+  path: latin_music_samples
+  audio:
+    format: wav
+    strategy: loudness
+    sample_rate: ${sample_rate}
+    loudness_headroom_db: 10
+  lm:
+    prompted_samples: true
+    unprompted_samples: true
+    no_text_conditioning: false
+    gen_gt_samples: true
+    prompt_duration: 7.5
+    gen_duration: 30
+    remove_prompts: false
+    # Latin music optimized generation
+    use_sampling: true
+    temp: 1.0  # Lower temperature for rhythmic accuracy
+    top_k: 150
+    top_p: 0.95
+    cfg_coef: 4.0
+    cfg_coef_rhythm: 3.0
+    cfg_coef_style: 2.0
+
+evaluate:
+  every: 15
+  num_workers: 6
+  metrics:
+    base: true
+    fad: true
+    kld: true
+    text_consistency: true
+    chroma_cosine: true
+    genre_accuracy: true
+    rhythm_consistency: true
+    clave_pattern_accuracy: true
+    cultural_authenticity: true
+
+checkpoint:
+  save_last: true
+  save_every: 20
+  keep_last: 25
+  keep_every_states: 50
+
+optim:
+  epochs: 600
+  updates_per_epoch: 3000
+  lr: 5e-5
+  optimizer: adamw
+  max_norm: 0.6
+  eager_sync: true
+  adam:
+    betas: [0.9, 0.95]
+    weight_decay: 0.02
+    eps: 1e-8
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 8000
+    lr_min_ratio: 0.05
+
+# Music Multiple: Latin music specialization
+music_multiple:
+  model_type: "music_multiple_latin"
+  sample_rate: 48000
+  channels: 2
+  application: "latin_music_generation"
+  
+  latin_music_optimizations:
+    extended_codebooks: true
+    rhythmic_precision: true
+    cultural_authenticity: true
+    regional_variations: true
+    
+  genre_specialization:
+    salsa: 
+      clave_patterns: true
+      horn_sections: true
+      piano_montunos: true
+      target_accuracy: ">= 90%"
+    reggaeton:
+      dem_bow_rhythm: true
+      synth_bass: true
+      vocal_style: true
+      target_accuracy: ">= 85%"
+    bachata:
+      guitar_techniques: true
+      romantic_melodies: true
+      bongo_patterns: true
+      target_accuracy: ">= 88%"
+    cumbia:
+      accordion_style: true
+      traditional_rhythms: true
+      regional_variants: true
+      target_accuracy: ">= 82%"
+    
+  cultural_features:
+    regional_authenticity: true
+    language_support: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]
+    regional_breakdown:
+      mexico:
+        genres: ["norteno", "banda", "mariachi"]
+        languages: ["spanish_mexico", "indigenous_languages"]
+      caribbean:
+        genres: ["salsa", "reggaeton", "merengue", "bachata"]
+        languages: ["spanish_caribbean"]
+      south_america:
+        genres: ["cumbia", "samba", "tango", "vallenato"]
+        languages: ["spanish_south_america", "portuguese_brazil"]
+      brazil:
+        genres: ["samba", "bossa_nova", "forro", "axe"]
+        languages: ["portuguese_brazil"]
+    dance_compatibility: true
+    
+  quality_targets:
+    rhythm_accuracy: ">= 95%"
+    cultural_authenticity: ">= 90%"
+    instrument_fidelity: ">= 85%"
+    danceability: ">= 80%"
+    regional_accuracy: ">= 85%"

@@ -1,0 +1,68 @@
+# @package __global__
+# Music Multiple - Audio Watermark Model Configuration
+# Based on Audiocraft with enhancements for multiple music genres
+
+audioseal:
+  autoencoder: seanet
+  sample_rate: 16000
+  channels: 1
+  nbits: 16
+
+seanet:
+  dimension: 128
+  channels: 1
+  causal: false
+  n_filters: 32
+  n_residual_layers: 1
+  ratios: [8, 5, 4, 2]
+  activation: ELU
+  activation_params: { "alpha": 1. }
+  norm: weight_norm
+  norm_params: {}
+  kernel_size: 7
+  residual_kernel_size: 3
+  last_kernel_size: 7
+  dilation_base: 2
+  pad_mode: constant
+  true_skip: true
+  compress: 2
+  lstm: 2
+  disable_norm_outer_blocks: 0
+  # Specific encoder or decoder params.
+  # You can also override any param for the encoder or decoder only
+  # by using Hydra `+param=` syntax, i.e.`
+  # `+seanet.decoder.n_filters=64`.
+  decoder:
+    trim_right_ratio: 1.0
+    final_activation: null
+    final_activation_params: null
+  encoder: {}
+
+detector: {
+  "output_dim": 32, # output channels of detector upsampling
+}
+
+# Music Multiple: Watermarking enhancements for music protection
+music_multiple:
+  watermarking_system: "audioseal"
+  purpose: "copyright_protection_and_tracking"
+  
+  watermark_capabilities:
+    robustness: "high"  # Resistance to audio processing
+    imperceptibility: "high"  # Minimal audio quality impact
+    capacity: "medium"  # Amount of information embedded
+    
+  genre_considerations:
+    multi_genre_compatibility: true
+    preservation_of_musical_quality: true
+    adaptive_embedding: true  # Adjust based on music genre
+    
+  integration_features:
+    real_time_embedding: true
+    batch_processing: true
+    detection_efficiency: "high"
+    
+  security_enhancements:
+    encryption_support: true
+    key_management: true
+    tamper_detection: true

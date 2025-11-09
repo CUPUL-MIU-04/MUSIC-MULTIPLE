@@ -1,0 +1,12 @@
+# @package __global__
+# Music Multiple - Dataset configurations
+# Enhanced for multiple music genres and latin music datasets
+
+datasource:
+  max_sample_rate: ???
+  max_channels: ???
+
+  train: ???
+  valid: ???
+  evaluate: ???
+  generate: null

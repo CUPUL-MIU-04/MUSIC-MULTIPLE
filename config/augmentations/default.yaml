@@ -1,0 +1,104 @@
+# @package __global__
+# Audio augmentations configuration for Music Multiple
+# Based on Audiocraft with enhancements for multiple music genres
+
+audio_effects:
+  speed:
+    sample_rate: ${sample_rate}
+    speed_range: [0.8, 1.2]
+  updownresample:
+    sample_rate: ${sample_rate}
+    intermediate_freq: 32000
+  echo:
+    sample_rate: ${sample_rate}
+    volume_range: [0.1, 0.5]
+    duration_range: [0.1, 0.5]
+  random_noise:
+    noise_std: 0.001
+  pink_noise:
+    noise_std: 0.01
+  lowpass_filter:
+    sample_rate: ${sample_rate}
+    cutoff_freq: 5000
+  highpass_filter:
+    cutoff_freq: 500
+    sample_rate: ${sample_rate}
+  bandpass_filter:
+    cutoff_freq_low: 300
+    cutoff_freq_high: 8000
+    sample_rate: ${sample_rate}
+  smooth:
+    window_size_range: [2, 10]
+  boost_audio:
+    amount: 20
+  duck_audio:
+    amount: 20
+  mp3_compression:
+    sample_rate: ${sample_rate}
+    bitrate: 128k # should be a string e.g. "8k", "32k".. cf ffmpeg to see available bitrates
+  aac_compression:
+    sample_rate: ${sample_rate}
+    bitrate: 128k # should be a string e.g. "8k", "32k".. cf ffmpeg to see available bitrates
+    lowpass_freq: null # don't apply low pass freq to ffmpeg aac compression
+  encodec:
+    ckpt: "//pretrained/facebook/encodec_24khz"
+    n_qs: [4, 8, 16]
+  
+  # Music Multiple: Additional augmentations for latin music
+  latin_rhythm_variation:
+    enabled: true
+    pattern_variations: ["clave", "tumbao", "dem_bow"]
+    intensity_range: [0.1, 0.3]
+  genre_style_transfer:
+    enabled: true
+    available_styles: ["salsa", "reggaeton", "bachata", "cumbia"]
+  
+  # Music Multiple: Enhanced effects for multiple genres
+  dynamic_range_compression:
+    ratio: [2.0, 4.0]
+    threshold: -20
+  stereo_enhancement:
+    width_factor: [1.1, 1.5]
+
+select_aug_mode:
+  "use_eval" # other are 'all' and 'use_eval_acc', used to sample augmentations, `fixed` uses the prob from aug_weights, `all` uses all agmentations every step
+  # `use_eval_acc` changes the weights based on the accuracies at evaluation time
+
+aug_weights:
+  speed: 0.1
+  updownresample: 0.1
+  echo: 0.1
+  pink_noise: 0.1
+  lowpass_filter: 0.1
+  highpass_filter: 0.1
+  bandpass_filter: 0.1
+  smooth: 0.1
+  boost_audio: 0.1
+  duck_audio: 0.1
+  mp3_compression: 0.1 # eval only never use in training even if eval_acc low
+  aac_compression: 0.1 # eval only never use in training even if eval_acc low
+  encodec: 0.1
+  identity: 1 # no augmentation
+  
+  # Music Multiple: Additional augmentation weights
+  latin_rhythm_variation: 0.05
+  genre_style_transfer: 0.05
+  dynamic_range_compression: 0.08
+  stereo_enhancement: 0.08
+
+n_max_aug: null
+
+# Music Multiple: Genre-specific augmentation settings
+genre_specific_augmentations:
+  latin:
+    rhythm_complexity: high
+    percussion_emphasis: true
+    syncopation_level: 0.7
+  electronic:
+    synth_variations: true
+    beat_repetition: medium
+    fx_processing: high
+  acoustic:
+    natural_reverb: true
+    dynamic_variation: high
+    timing_imperfections: 0.3

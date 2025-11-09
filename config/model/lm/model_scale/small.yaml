@@ -1,0 +1,28 @@
+# @package __global__
+# Music Multiple - Transformer LM Small Scale (~300M params)
+# Efficient model for constrained environments
+
+# 300M Param.
+transformer_lm:
+  dim: 1024
+  num_heads: 16
+  num_layers: 24
+
+# Music Multiple: Small model optimizations
+music_multiple:
+  model_scale: "small"
+  parameter_count: "300M"
+  recommended_use: ["mobile_applications", "real_time_generation", "resource_constrained"]
+  memory_requirements: "low"
+  training_speed: "fast"
+  
+  genre_performance:
+    latin: "adequate"
+    electronic: "good"
+    acoustic: "adequate"
+    complex_genres: "basic"
+    
+  efficiency_features:
+    fast_inference: true
+    low_memory_footprint: true
+    suitable_for_edge_devices: true

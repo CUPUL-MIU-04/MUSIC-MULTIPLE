@@ -1,0 +1,108 @@
+# @package __global__
+# Music Multiple - Latin Music Compression Configuration
+# Specialized compression for latin music genres at 48kHz
+
+defaults:
+  - compression/default
+  - /model: encodec/latin_music_focused
+  - override /dset: audio/latin_music_48khz
+  - _self_
+
+channels: 2  # Stereo for full musical experience
+sample_rate: 48000  # Professional audio quality
+
+# Loss balancing optimized for latin music characteristics
+losses:
+  adv: 2.5
+  feat: 2.5
+  l1: 0.3
+  mel: 0.8
+  msspec: 2.0
+  sisnr: 0.2
+
+balancer:
+  balance_grads: true
+  ema_decay: 0.998
+  per_batch_item: true
+  total_norm: 0.8
+
+adversarial:
+  every: 1
+  adversaries: [msstftd, mpd, msd]  # Comprehensive adversarial training
+  adv_loss: hinge
+  feat_loss: l1
+
+# Optimized for latin music frequency characteristics
+mel:
+  sample_rate: ${sample_rate}
+  n_fft: 2048
+  hop_length: 512
+  win_length: 2048
+  n_mels: 96
+  f_min: 40  # Emphasize lower frequencies for percussion
+  f_max: 20000
+
+msspec:
+  sample_rate: ${sample_rate}
+  range_start: 5
+  range_end: 13
+  n_mels: 96
+  f_min: 40
+  f_max: 20000
+
+# Dataset optimized for latin music
+dataset:
+  batch_size: 32  # Smaller batches for complex audio
+  num_workers: 8
+  segment_duration: 3  # Longer segments for rhythmic patterns
+  train:
+    num_samples: 800000
+  valid:
+    num_samples: 15000
+  evaluate:
+    batch_size: 16
+    num_samples: 500
+  generate:
+    batch_size: 16
+    num_samples: 20
+    segment_duration: 20
+
+# Frequent evaluation for quality control
+evaluate:
+  every: 15
+generate:
+  every: 15
+
+# Extended training for genre mastery
+optim:
+  epochs: 400
+  updates_per_epoch: 3000
+  lr: 1.5e-4
+
+# Music Multiple: Latin music compression specialization
+music_multiple:
+  model_type: "compression_latin_music"
+  sample_rate: 48000
+  channels: 2
+  application: "latin_music_compression"
+  
+  compression_model: "latin_music_focused"
+  target_bitrate: "8 kbps"
+  
+  latin_music_optimizations:
+    percussion_preservation: true
+    rhythmic_accuracy: true
+    vocal_clarity: true
+    brass_instrument_fidelity: true
+    
+  genre_specific_features:
+    salsa_optimized: true
+    reggaeton_optimized: true
+    bachata_optimized: true
+    cumbia_optimized: true
+    
+  quality_targets:
+    clave_pattern_preservation: ">= 95%"
+    percussion_transient_response: "excellent"
+    vocal_intelligibility: "high"
+    stereo_image: "wide_and_stable"

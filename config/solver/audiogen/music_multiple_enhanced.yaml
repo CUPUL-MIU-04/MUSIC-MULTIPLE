@@ -1,0 +1,101 @@
+# @package __global__
+# Music Multiple - Enhanced AudioGen Solver Configuration
+# Optimized for multiple genre audio generation
+
+defaults:
+  - audiogen/default
+  - /model: lm/audiogen_lm
+  - override /dset: audio/multigenre_32khz
+  - _self_
+
+autocast: true
+autocast_dtype: bfloat16  # Enhanced precision
+
+compression_model_checkpoint: //reference/music_multiple_enhanced/checkpoint.th
+
+channels: 2  # Stereo for better audio experience
+sample_rate: 32000  # Higher sample rate for music
+
+deadlock:
+  use: true
+
+dataset:
+  batch_size: 96  # Adjusted for stereo
+  num_workers: 16
+  segment_duration: 15  # Longer segments for musical content
+  min_segment_ratio: 1.0
+  sample_on_weight: true  # Weighted sampling for genre balance
+  sample_on_duration: false
+  external_metadata_source: null
+  
+  train:
+    batch_size: 192
+    aug_p: 0.6  # Increased augmentation for genre diversity
+    mix_p: 0.4  # Adjusted mixing probability
+    mix_snr_low: -3
+    mix_snr_high: 8
+    mix_min_overlap: 0.6
+
+generate:
+  lm:
+    use_sampling: true
+    top_k: 300  # Increased diversity
+    top_p: 0.1  # Nucleus sampling for better quality
+
+optim:
+  epochs: 150  # Extended training for genre mastery
+  optimizer: adamw
+  lr: 3e-4  # Adjusted learning rate
+  ema:
+    use: true
+    updates: 15
+    device: cuda
+  max_norm: 0.8  # Tighter gradient clipping
+
+logging:
+  log_tensorboard: true
+  log_audio_samples: true  # Additional logging for audio quality
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 5000
+    t_max: 150000
+    eta_min: 1e-6
+
+# Music Multiple: Enhanced AudioGen configuration
+music_multiple:
+  model_type: "audiogen_enhanced"
+  target_applications: ["music_generation", "sound_design", "multi_genre_audio"]
+  
+  audio_quality_enhancements:
+    sample_rate: 32000
+    channels: 2
+    bit_depth: "high_quality"
+    
+  genre_adaptation:
+    multi_genre_training: true
+    genre_balanced_batches: true
+    cross_genre_augmentation: true
+    
+  training_optimizations:
+    mixed_precision: true
+    gradient_clipping: 0.8
+    learning_rate_scheduling: "cosine"
+    extended_training: true
+    
+  data_processing:
+    weighted_sampling: true
+    extended_segments: true
+    enhanced_augmentation: true
+    
+  generation_enhancements:
+    diverse_sampling: true
+    quality_focused: true
+    genre_aware_generation: true
+    
+  performance_targets:
+    training_epochs: 150
+    learning_rate: 3e-4
+    batch_size: 96
+    segment_duration: 15

@@ -1,0 +1,24 @@
+# @package __global__
+# Music Multiple - MusicCaps Dataset Configuration
+# 32kHz music dataset with rich descriptions for music generation
+
+# total samples obtained from MusicCaps = 5469
+datasource:
+  max_sample_rate: 32000
+  max_channels: 2
+
+  train: null  # only evaluation set
+  valid: null  # only evaluation set
+  evaluate: egs/musiccaps/musiccaps_32khz
+  generate: egs/musiccaps/musiccaps_32khz # identical to evaluate
+
+# Music Multiple: Enhanced metadata
+music_multiple:
+  dataset_type: "evaluation"
+  audio_content: "music"
+  genre_annotations: true
+  instrument_tags: true
+  mood_classification: true
+  tempo_information: true
+  multilingual_support: false
+  quality_rating: "high"

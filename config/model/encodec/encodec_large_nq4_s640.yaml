@@ -1,0 +1,23 @@
+# @package __global__
+# Music Multiple - EnCodec Large NQ4 S640 Configuration
+# Ultra-quality model with 4 codebooks and optimized for 64kHz
+
+defaults:
+  - encodec/default
+
+seanet:
+  ratios: [8, 5, 4, 4]
+  n_filters: 64
+
+rvq:
+  bins: 2048
+  n_q: 4
+  q_dropout: false
+
+# Music Multiple: Ultra-quality settings
+music_multiple:
+  quality_preset: "ultra_quality"
+  bitrate: "3.0 kbps"
+  recommended_for: ["studio_production", "archival", "master_quality"]
+  frequency_response: "full_spectrum"
+  dynamic_range: "extended"

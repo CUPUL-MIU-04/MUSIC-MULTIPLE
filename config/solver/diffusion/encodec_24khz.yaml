@@ -1,0 +1,29 @@
+# @package __global__
+# Music Multiple - Diffusion with EnCodec 24kHz Configuration
+# Diffusion model using EnCodec compression at 24kHz
+
+defaults:
+  - diffusion/default
+  - _self_
+
+
+sample_rate: 24000
+channels: 1
+compression_model_checkpoint: //pretrained/facebook/encodec_24khz
+n_q: 4  # num quantizers, 3kbps
+
+# Music Multiple: Diffusion with EnCodec
+music_multiple:
+  model_type: "diffusion_encodec_24khz"
+  sample_rate: 24000
+  channels: 1
+  application: "audio_generation_via_diffusion"
+  
+  compression_model: "encodec_24khz"
+  codebooks_used: 4
+  target_bitrate: "3 kbps"
+  
+  use_cases:
+    audio_enhancement: true
+    style_transfer: true
+    audio_completion: true

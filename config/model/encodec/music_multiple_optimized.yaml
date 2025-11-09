@@ -1,0 +1,45 @@
+# @package __global__
+# Music Multiple - Optimized EnCodec Configuration
+# Specifically tuned for multiple music genre generation
+
+defaults:
+  - encodec/default
+
+encodec:
+  sample_rate: 44100  # CD quality for music
+  channels: 2         # Stereo for better music experience
+
+seanet:
+  n_filters: 48       # Balanced between quality and efficiency
+  n_residual_layers: 2
+  ratios: [8, 5, 4, 2]
+  dimension: 192      # Increased for better music representation
+
+rvq:
+  n_q: 12             # More codebooks for musical complexity
+  bins: 2048
+  q_dropout: 0.1      # Regularization for genre diversity
+  decay: 0.99
+
+# Music Multiple: Genre-specific optimizations
+music_multiple:
+  configuration: "genre_optimized"
+  sample_rate: 44100
+  bit_depth: "high"
+  
+  genre_enhancements:
+    preserve_rhythm_detail: true
+    harmonic_richness: "enhanced"
+    transient_handling: "optimized"
+    
+  quality_targets:
+    percussion_clarity: 95%
+    vocal_presence: 90%
+    instrument_separation: 85%
+    stereo_image: "wide"
+    
+  recommended_applications:
+    - "latin_music_generation"
+    - "electronic_music_production"
+    - "multi_genre_composition"
+    - "real_time_performance"

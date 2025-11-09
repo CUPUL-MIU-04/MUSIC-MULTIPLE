@@ -1,0 +1,27 @@
+# @package __global__
+# Music Multiple - EnCodec for MusicGen 32kHz Configuration
+# Compression model optimized for music generation at 32kHz
+
+defaults:
+  - compression/default
+  - /model: encodec/encodec_large_nq4_s640
+  - override /dset: audio/default
+  - _self_
+
+channels: 1
+sample_rate: 32000
+
+# Music Multiple: EnCodec for MusicGen
+music_multiple:
+  model_type: "encodec_musicgen"
+  sample_rate: 32000
+  channels: 1
+  application: "music_compression_and_generation"
+  
+  compression_model: "encodec_large_nq4_s640"
+  target_bitrate: "3 kbps"
+  
+  use_cases:
+    music_generation: true
+    high_quality_audio: true
+    music_production: true

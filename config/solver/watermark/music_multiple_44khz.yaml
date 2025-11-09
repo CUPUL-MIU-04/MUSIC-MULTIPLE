@@ -1,0 +1,147 @@
+# @package __global__
+# Music Multiple - Enhanced Watermark Configuration for 44.1kHz
+# Watermarking optimized for music content
+
+defaults:
+  - /solver/default
+  - /augmentations/default
+  - /model: watermark/default
+  - override /dset: audio/multigenre_44khz
+  - _self_
+
+solver: watermarking
+sample_rate: 44100
+channels: 2  # Stereo for music
+
+# Enhanced loss balancing for music
+losses:
+  adv: 3.
+  feat: 3.
+  l1: 0.2
+  mel: 0.5
+  msspec: 1.5
+  sisnr: 0.1
+  wm_detection: 1.2
+  wm_mb: 1.2
+  tf_loudnessratio: 8.0
+
+balancer:
+  balance_grads: true
+  ema_decay: 0.999
+  per_batch_item: true
+  total_norm: 1.
+
+crop:
+  prob: 0.5
+  shuffle_prob: 0.2
+  pad_prob: 0.2
+  size: 0.6
+  max_n_windows: 6
+
+adversarial:
+  every: 1
+  adversaries: [msstftd, mpd]  # Multiple adversaries for music
+  adv_loss: hinge
+  feat_loss: l1
+
+# Adjusted for higher sample rate
+mel:
+  sample_rate: ${sample_rate}
+  n_fft: 2048
+  hop_length: 512
+  win_length: 2048
+  n_mels: 80
+  f_min: 20
+  f_max: 22050
+
+msspec:
+  sample_rate: ${sample_rate}
+  range_start: 6
+  range_end: 12
+  n_mels: 80
+  f_min: 20
+  f_max: 22050
+
+# Enhanced dataset for music
+dataset:
+  batch_size: 12  # Reduced for stereo
+  num_workers: 12
+  segment_duration: 2  # Longer segments for musical context
+  sample_on_weight: true  # Weighted sampling for genre balance
+  sample_on_duration: false
+  train:
+    num_samples: 1000000
+  valid:
+    num_samples: 20000
+  evaluate:
+    batch_size: 12
+    num_samples: 1000
+    segment_duration: 15
+  generate:
+    batch_size: 12
+    num_samples: 25
+    segment_duration: 30
+
+# More frequent evaluation
+evaluate:
+  every: 15
+  num_workers: 6
+  metrics:
+    visqol: true
+    sisnr: true
+generate:
+  every: 15
+  num_workers: 6
+
+# Extended training
+optim:
+  epochs: 400
+  updates_per_epoch: 2500
+  lr: 3e-5
+  max_norm: 2.0
+
+checkpoint:
+  save_last: true
+  save_every: 20
+  keep_last: 15
+  keep_every_states: 50
+
+# Music Multiple: Enhanced watermark configuration
+music_multiple:
+  model_type: "watermark_enhanced"
+  sample_rate: 44100
+  channels: 2
+  application: "music_content_watermarking"
+  
+  music_specific_optimizations:
+    stereo_aware_watermarking: true
+    musical_structure_preservation: true
+    genre_adaptive_embedding: true
+    dynamic_range_consideration: true
+    
+  enhanced_capabilities:
+    detection_reliability: "very_high"
+    message_capacity: "high"
+    imperceptibility: "very_high"
+    robustness: "very_high"
+    
+  genre_considerations:
+    latin_music:
+      rhythmic_complexity_handling: true
+      percussion_preservation: true
+      cultural_authenticity: true
+    electronic_music:
+      synth_preservation: true
+      beat_integrity: true
+      fx_processing_robustness: true
+    acoustic_music:
+      natural_sound_preservation: true
+      dynamic_range_protection: true
+      instrument_fidelity: true
+    
+  quality_targets:
+    detection_accuracy: ">= 98%"
+    message_recovery: ">= 95%"
+    audio_quality: ">= 4.5/5.0"
+    robustness_to_processing: ">= 90%"
+    genre_preservation: ">= 85%"

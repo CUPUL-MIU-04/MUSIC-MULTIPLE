@@ -1,0 +1,158 @@
+# @package __global__
+# Music Multiple - Latin Music MAGNeT Configuration
+# MAGNeT model specialized for latin music genres
+
+defaults:
+  - musicgen/default
+  - /model: lm/latin_music_lm
+  - override /dset: audio/latin_music_48khz
+  - _self_
+
+lm_model: transformer_lm_magnet
+solver: magnet
+
+autocast: true
+autocast_dtype: bfloat16
+
+# EnCodec specialized for latin music
+compression_model_checkpoint: //pretrained/music_multiple/encodec_latin_48khz
+
+efficient_attention_backend: xformers
+
+channels: 2  # Stereo for full musical experience
+sample_rate: 48000  # Professional quality
+
+deadlock:
+  use: true
+
+dataset:
+  batch_size: 128  # Adjusted for complex audio
+  sample_on_weight: true
+  sample_on_duration: false
+  segment_duration: 20  # Longer segments for complete musical phrases
+
+optim:
+  epochs: 800  # Extensive training for cultural mastery
+  optimizer: dadam
+  lr: 0.6  # Lower learning rate for precision
+  ema:
+    use: true
+    updates: 20
+    device: cuda
+
+logging:
+  log_tensorboard: true
+  log_audio_samples: true
+  log_cultural_metrics: true
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 8000
+    lr_min_ratio: 0.02
+    cycle_length: 1.0
+
+codebooks_pattern:
+  modeling: parallel
+  parallel:
+    empty_initial: -1
+  
+transformer_lm:
+  card: 2048
+  causal: false
+  subcodes_context: 12  # Extended context for complex rhythms
+  compression_model_framerate: 100  # Higher framerate for rhythmic precision
+  segment_duration: 0
+  span_len: -1
+
+masking:
+  span_len: 5  # Longer spans for rhythmic patterns
+
+generate:
+  lm: 
+    max_prompt_len: null
+    max_gen_len: null
+    remove_prompts: false
+    use_sampling: true
+    temp: 2.0  # Lower temperature for rhythmic accuracy
+    top_k: 100
+    top_p: 0.98
+    max_cfg_coef: 12.0
+    min_cfg_coef: 2.0
+    decoding_steps: [100, 25, 20, 15]  # More steps for complex music
+    anneal_temp: true
+    span_scoring: 'max'
+    span_arrangement: 'nonoverlap'
+    cfg_coef_rhythm: 3.0  # Rhythm-specific guidance
+    cfg_coef_style: 2.0   # Style-specific guidance
+    prompted_samples: false
+    samples:
+      prompted: false
+      unprompted: true
+
+# Music Multiple: Latin music MAGNeT specialization
+music_multiple:
+  model_type: "magnet_latin_music"
+  sample_rate: 48000
+  channels: 2
+  application: "latin_music_generation"
+  
+  latin_music_optimizations:
+    rhythmic_precision: true
+    cultural_authenticity: true
+    regional_variations: true
+    traditional_forms: true
+    
+  genre_specialization:
+    salsa: 
+      clave_patterns: true
+      horn_sections: true
+      piano_montunos: true
+    reggaeton:
+      dem_bow_rhythm: true
+      synth_bass: true
+      vocal_style: true
+    bachata:
+      guitar_techniques: true
+      romantic_melodies: true
+      bongo_patterns: true
+    cumbia:
+      accordion_style: true
+      traditional_rhythms: true
+      regional_variants: true
+    
+  cultural_features:
+    regional_authenticity: true
+    language_support: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]
+    regional_breakdown:
+      mexico:
+        genres: ["norteno", "banda", "mariachi"]
+        languages: ["spanish_mexico", "indigenous_languages"]
+      caribbean:
+        genres: ["salsa", "reggaeton", "merengue", "bachata"]
+        languages: ["spanish_caribbean"]
+      south_america:
+        genres: ["cumbia", "samba", "tango", "vallenato"]
+        languages: ["spanish_south_america", "portuguese_brazil"]
+      brazil:
+        genres: ["samba", "bossa_nova", "forro", "axe"]
+        languages: ["portuguese_brazil"]
+      central_america:
+        genres: ["punta", "reggaeton", "cumbia"]
+        languages: ["spanish_caribbean", "indigenous_languages"]
+    dance_compatibility: true
+    
+  magnet_specific_enhancements:
+    extended_rhythmic_context: true
+    cultural_pattern_modeling: true
+    enhanced_temporal_resolution: true
+    
+  quality_targets:
+    rhythm_accuracy: ">= 95%"
+    cultural_authenticity: ">= 90%"
+    instrument_fidelity: ">= 85%"
+    danceability: ">= 80%"
+    regional_accuracy: ">= 85%"

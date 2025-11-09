@@ -1,0 +1,69 @@
+# @package __global__
+# Music Multiple - Multi-Genre Conditioner
+# Specialized configuration for multiple genre music generation
+
+classifier_free_guidance:
+  training_dropout: 0.2
+  inference_coef: 3.5
+
+attribute_dropout:
+  text: 
+    description: 0.2
+  symbolic:
+    genre: 0.3
+    style: 0.3
+
+fuser:
+  cross_attention_pos_emb: false
+  cross_attention_pos_emb_scale: 1
+  sum: []
+  prepend: []
+  cross: [description, genre, style]
+  input_interpolate: []
+
+conditioners:
+  description:
+    model: t5
+    t5:
+      name: t5-base
+      finetune: false
+      word_dropout: 0.2
+      normalize_text: false
+      
+  genre:
+    model: genre_classifier
+    genre_classifier:
+      genres: [
+        "salsa", "reggaeton", "bachata", "cumbia", 
+        "merengue", "rock", "pop", "electronic",
+        "jazz", "hiphop", "classical", "folk"
+      ]
+      out_dim: 24
+      
+  style:
+    model: style_embedding
+    style_embedding:
+      styles: [
+        "upbeat", "romantic", "dance", "relaxing",
+        "energetic", "melancholic", "festive", "intense"
+      ]
+      out_dim: 16
+      
+  duration:
+    model: duration_control
+    duration_control:
+      presets: ["clip", "short", "medium", "long", "extended"]
+      out_dim: 8
+
+dataset:
+  train:
+    merge_text_p: 0.3
+    drop_desc_p: 0.4
+    drop_other_p: 0.4
+    
+# Music Multiple specific settings
+music_multiple:
+  enable_genre_fusion: true
+  max_genre_combination: 2
+  rhythm_pattern_conditioning: true
+  instrument_aware_generation: true

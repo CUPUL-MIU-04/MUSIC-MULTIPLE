@@ -1,0 +1,27 @@
+# @package __global__
+# Music Multiple - EnCodec for AudioGen 16kHz Configuration
+# Compression model optimized for AudioGen at 16kHz
+
+defaults:
+  - compression/default
+  - /model: encodec/encodec_large_nq4_s320
+  - override /dset: audio/default
+  - _self_
+
+channels: 1
+sample_rate: 16000
+
+# Music Multiple: EnCodec for AudioGen
+music_multiple:
+  model_type: "encodec_audiogen"
+  sample_rate: 16000
+  channels: 1
+  application: "text_to_sound_generation"
+  
+  compression_model: "encodec_large_nq4_s320"
+  target_bitrate: "1.5 kbps"
+  
+  use_cases:
+    sound_effects: true
+    environmental_sounds: true
+    general_audio: true

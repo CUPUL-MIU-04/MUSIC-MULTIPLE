@@ -1,0 +1,30 @@
+# Music Multiple - Default Team Configuration
+# Base team configuration for Music Multiple
+
+default:
+  dora_dir: /tmp/music_multiple_${oc.env:USER}
+  partitions:
+    global: debug
+    team: debug
+  reference_dir: /tmp
+darwin:  # if we detect we are on a Mac, then most likely we are doing unit testing etc.
+  dora_dir: /tmp/music_multiple_${oc.env:USER}
+  partitions:
+    global: debug
+    team: debug
+  reference_dir: /tmp
+
+# Music Multiple: Default team settings
+music_multiple:
+  environment: "default"
+  purpose: "local_development_and_testing"
+  
+  storage_configuration:
+    local_experiments: true
+    temporary_storage: true
+    debug_partitions: true
+    
+  development_features:
+    fast_iteration: true
+    minimal_storage: true
+    cross_platform: true

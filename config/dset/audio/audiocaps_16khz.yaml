@@ -1,0 +1,21 @@
+# @package __global__
+# Music Multiple - AudioCaps Dataset Configuration
+# 16kHz audio captioning dataset for text-to-audio generation
+
+# AudioCaps dataset
+datasource:
+  max_sample_rate: 16000
+  max_channels: 1
+
+  train: null  # only evaluation set
+  valid: null  # only evaluation set
+  evaluate: egs/audiocaps/audiocaps_16khz
+  generate: egs/audiocaps/audiocaps_16khz # identical to evaluate
+
+# Music Multiple: AudioCaps enhancements
+music_multiple:
+  dataset_type: "evaluation"
+  audio_content: "general_sounds"
+  genre_annotations: false
+  multilingual_support: false
+  recommended_use: "text_to_audio_baseline"

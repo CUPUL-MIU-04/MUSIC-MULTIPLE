@@ -1,0 +1,19 @@
+# @package __global__
+# Music Multiple - Transformer LM Base Scale (~60M params)
+# Balanced model for general music generation
+
+# overrides nothing because default is already transformer base (~ 60M params)
+
+# Music Multiple: Base model optimizations
+music_multiple:
+  model_scale: "base"
+  parameter_count: "60M"
+  recommended_use: ["prototyping", "fast_inference", "educational"]
+  memory_requirements: "moderate"
+  training_speed: "fast"
+  
+  genre_performance:
+    latin: "good"
+    electronic: "good" 
+    acoustic: "good"
+    complex_genres: "basic"

@@ -1,0 +1,12 @@
+# @package __global__
+# Music Multiple - Dataset configurations
+# Enhanced for multiple music genres and latin music datasets
+
+datasource:
+  max_sample_rate: 44100
+  max_channels: 2
+
+  train: egs/example
+  valid: egs/example
+  evaluate: egs/example
+  generate: egs/example

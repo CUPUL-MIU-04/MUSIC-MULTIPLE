@@ -1,0 +1,116 @@
+# @package __global__
+# Music Multiple - Comprehensive MusicGen Evaluation
+# Extended evaluation for multiple genre music generation
+
+dataset:
+  max_audio_duration: 30.0  # Extended for music evaluation
+  evaluate:
+    min_audio_duration: 5.0  # Longer minimum for musical content
+    max_audio_duration: 30.0
+    num_samples: 1000
+    segment_duration: 10.0
+  generate:
+    min_audio_duration: 5.0
+    max_audio_duration: 30.0
+    num_samples: 200
+
+evaluate:
+  metrics:
+    fad: true
+    kld: true
+    text_consistency: true
+    # Music Multiple: Additional metrics
+    genre_accuracy: true
+    rhythm_consistency: true
+    musicality_score: true
+    cultural_authenticity: true
+
+metrics:
+  kld:
+    passt:
+      pretrained_length: 30  # Extended for musical content
+  genre_accuracy:
+    model: "music_classifier"
+    classes: [
+      "salsa", "reggaeton", "bachata", "cumbia", "merengue",
+      "electronic", "rock", "pop", "classical", "jazz", "hiphop", "other"
+    ]
+  rhythm_consistency:
+    method: "rhythm_pattern_matching"
+    tolerance: 0.1
+  musicality_score:
+    components: ["harmonic_coherence", "rhythmic_stability", "structural_integrity"]
+  cultural_authenticity:
+    regions: [
+      "mexico", "caribbean", "south_america", "brazil", "central_america"
+    ]
+    languages: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]
+
+# Music Multiple: Comprehensive evaluation framework
+music_multiple:
+  evaluation_type: "music_focused_comprehensive"
+  purpose: "holistic_assessment_of_music_generation_capabilities"
+  
+  evaluation_dimensions:
+    audio_quality:
+      - "fidelity"
+      - "artifact_level" 
+      - "frequency_response"
+    musical_quality:
+      - "harmonic_coherence"
+      - "rhythmic_accuracy"
+      - "structural_soundness"
+    semantic_alignment:
+      - "text_description_matching"
+      - "genre_consistency"
+      - "style_adherence"
+    cultural_appropriateness:
+      - "genre_authenticity"
+      - "cultural_elements"
+      - "regional_characteristics"
+      
+  genre_specific_benchmarks:
+    latin_music:
+      clave_pattern_accuracy: ">= 85%"
+      percussion_fidelity: ">= 80%"
+      danceability: ">= 70%"
+      regional_accuracy: ">= 75%"
+    electronic_music:
+      beat_regularity: ">= 90%"
+      synth_quality: ">= 85%"
+      mix_balance: ">= 80%"
+    acoustic_music:
+      natural_instrument_sound: ">= 85%"
+      dynamic_range: ">= 75%"
+      performance_authenticity: ">= 80%"
+      
+  regional_evaluation:
+    mexico:
+      target_genres: ["norteno", "banda", "mariachi"]
+      language_support: ["spanish_mexico", "indigenous_languages"]
+      cultural_metrics: ["instrument_authenticity", "regional_style"]
+    caribbean:
+      target_genres: ["salsa", "reggaeton", "merengue", "bachata"]
+      language_support: ["spanish_caribbean"]
+      cultural_metrics: ["rhythmic_authenticity", "dance_compatibility"]
+    south_america:
+      target_genres: ["cumbia", "samba", "tango", "vallenato"]
+      language_support: ["spanish_south_america", "portuguese_brazil"]
+      cultural_metrics: ["harmonic_progression", "regional_variations"]
+    brazil:
+      target_genres: ["samba", "bossa_nova", "forro", "axe"]
+      language_support: ["portuguese_brazil"]
+      cultural_metrics: ["percussion_patterns", "cultural_authenticity"]
+    central_america:
+      target_genres: ["punta", "reggaeton", "cumbia"]
+      language_support: ["spanish_caribbean", "indigenous_languages"]
+      cultural_metrics: ["traditional_elements", "modern_fusion"]
+      
+  human_evaluation_components:
+    listening_tests: true
+    expert_review: true
+    cultural_consultation: true
+    genre_specialist_feedback: true

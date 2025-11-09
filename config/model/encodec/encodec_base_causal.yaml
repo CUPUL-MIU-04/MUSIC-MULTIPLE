@@ -1,0 +1,20 @@
+# @package __global__
+# Music Multiple - EnCodec Base Causal Configuration
+# Causal variant for real-time processing
+
+defaults:
+  - encodec/default
+
+encodec:
+  causal: true
+
+rvq:
+  n_q: 32
+  q_dropout: true
+
+# Music Multiple: Causal model optimizations
+music_multiple:
+  use_case: "real_time_generation"
+  latency_optimized: true
+  memory_efficient: true
+  streaming_capable: true

@@ -1,0 +1,64 @@
+# @package __global__
+# Music Multiple - AudioGen Objective Evaluation Configuration
+# Comprehensive objective metrics for AudioGen model assessment
+
+# Setup for execute only on audiocaps for audio generation
+# evaluation with objective metrics
+# execute_only=evaluate
+
+dataset:
+  max_audio_duration: null
+  # ensure the proper values are broadcasted here for evaluate
+  evaluate:
+    min_audio_duration: 1.  # some metrics requires a minimum audio length
+    max_audio_duration: null  # all samples from audiocaps should be ~10s
+    num_samples: null
+    segment_duration: null
+  generate:
+    min_audio_duration: 1.
+    max_audio_duration: null
+    num_samples: 500
+
+evaluate:
+  metrics:
+    fad: true
+    kld: true
+    text_consistency: true
+
+metrics:
+  kld:
+    passt:
+      pretrained_length: 10  # similarly to reported results in AudioGen paper
+
+# Music Multiple: Enhanced objective evaluation
+music_multiple:
+  evaluation_type: "comprehensive_objective"
+  purpose: "quantitative_assessment_of_audio_generation_quality"
+  
+  objective_metrics:
+    frechet_audio_distance: 
+      purpose: "audio_quality_and_diversity"
+      genre_sensitivity: "moderate"
+    kullback_leibler_divergence:
+      purpose: "feature_distribution_alignment" 
+      genre_sensitivity: "high"
+    text_consistency:
+      purpose: "semantic_alignment_with_text_description"
+      multi_lingual_support: false
+    
+  # Music Multiple: Additional evaluation metrics
+  enhanced_metrics:
+    genre_classification_accuracy: true
+    rhythm_pattern_fidelity: true
+    instrument_recognition_score: true
+    cultural_authenticity_score: false  # Can be enabled for specialized evaluation
+    
+  evaluation_datasets:
+    primary: "audiocaps"
+    secondary: ["musiccaps", "internal_music_datasets"]
+    genre_specific: ["latin_music_benchmark", "multi_genre_eval_set"]
+    
+  quality_benchmarks:
+    audio_quality: ">= 4.0/5.0 FAD"
+    text_alignment: ">= 0.7 consistency"
+    genre_accuracy: ">= 80% classification"

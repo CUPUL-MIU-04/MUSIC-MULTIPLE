@@ -1,0 +1,50 @@
+# @package __global__
+# Music Multiple - Latin Music EnCodec Configuration
+# Specialized for latin music characteristics
+
+defaults:
+  - encodec/default
+
+encodec:
+  sample_rate: 48000  # Higher rate for percussion detail
+  channels: 2
+
+seanet:
+  n_filters: 56
+  n_residual_layers: 2
+  ratios: [6, 4, 3, 2]  # Less aggressive downsampling for rhythm
+  dimension: 160
+
+rvq:
+  n_q: 16             # More codebooks for complex rhythms
+  bins: 2048
+  q_dropout: 0.05
+  decay: 0.995
+
+# Music Multiple: Latin music specializations
+music_multiple:
+  focus: "latin_music"
+  optimization_targets:
+    - "percussion_accuracy"
+    - "rhythm_patterns"
+    - "vocal_clarity"
+    - "brass_instruments"
+  
+  latin_genre_support:
+    salsa: 
+      clave_preservation: true
+      horn_section_fidelity: high
+    reggaeton:
+      kick_drum_punch: enhanced
+      synth_bass_definition: high
+    bachata:
+      guitar_articulation: detailed
+      vocal_emotion: preserved
+    cumbia:
+      accordion_character: authentic
+      guiro_rhythm: clear
+  
+  audio_characteristics:
+    transient_response: "fast"
+    low_frequency_handling: "extended"
+    high_frequency_detail: "preserved"

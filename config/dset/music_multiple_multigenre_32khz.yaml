@@ -1,0 +1,110 @@
+# @package __global__
+# Music Multiple - Multi-Genre Balanced Dataset
+# Balanced dataset for versatile music generation with country-specific styles
+
+datasource:
+  max_sample_rate: 32000
+  max_channels: 2
+
+  train: egs/music_multiple/multigenre/train
+  valid: egs/music_multiple/multigenre/valid
+  evaluate: egs/music_multiple/multigenre/test
+  generate: egs/music_multiple/multigenre/test
+
+# Music Multiple: Multi-genre configuration
+music_multiple:
+  dataset_type: "training"
+  audio_content: "music"
+  specialization: "genre_diversity"
+  total_tracks: 100000
+  quality_rating: "professional"
+  
+  # Balanced genre distribution
+  genre_distribution:
+    latin: 20%
+    electronic: 20%
+    rock: 15%
+    pop: 15%
+    jazz: 10%
+    classical: 10%
+    world: 5%
+    hiphop: 5%
+  
+  # COUNTRY-SPECIFIC STYLES - GLOBAL
+  country_styles:
+    # América Latina
+    mexico:
+      primary_genres: ["mariachi", "ranchera", "banda", "norteño"]
+      rhythm_patterns: ["huapango", "son_jarocho", "corrido"]
+      instruments: ["trumpet", "guitarrón", "vihuela", "accordion"]
+      vocal_characteristics: ["grito_mexicano", "emotional_vibrato"]
+      
+    puerto_rico:
+      primary_genres: ["reggaeton", "salsa", "bachata", "plena"]
+      rhythm_patterns: ["dembow", "salsa_pattern", "bomba"]
+      instruments: ["congas", "bongos", "trombone", "synth_bass"]
+      
+    colombia:
+      primary_genres: ["cumbia", "vallenato", "salsa", "reggaeton"]
+      rhythm_patterns: ["cumbia_rhythm", "vallenato_acordion"]
+      instruments: ["accordion", "guacharaca", "caja", "gaita"]
+      
+    brazil:
+      primary_genres: ["samba", "bossa_nova", "forró", "funk_carioca"]
+      rhythm_patterns: ["samba_batucada", "bossa_nova_swing"]
+      instruments: ["cavaquinho", "pandeiro", "berimbau", "cuica"]
+      
+    argentina:
+      primary_genres: ["tango", "folklore", "cuarteto", "rock_argentino"]
+      rhythm_patterns: ["tango_compas", "chacarera", "zamba"]
+      instruments: ["bandoneon", "charango", "bombo_legüero"]
+    
+    # Asia
+    south_korea:
+      primary_genres: ["kpop", "trot", "hiphop", "ballad"]
+      rhythm_patterns: ["kpop_syncopation", "trot_rhythm"]
+      instruments: ["synth", "electronic_drums", "traditional_strings"]
+      
+    japan:
+      primary_genres: ["jpop", "city_pop", "enka", "anison"]
+      rhythm_patterns: ["jpop_beat", "enka_rhythm"]
+      instruments: ["shamisen", "koto", "taiko", "electronic_elements"]
+      
+    china:
+      primary_genres: ["cpop", "mandopop", "folk", "rock_chino"]
+      rhythm_patterns: ["traditional_chinese", "modern_pop"]
+      instruments: ["erhu", "pipa", "guzheng", "modern_synth"]
+
+    # Europa y Otros
+    spain:
+      primary_genres: ["flamenco", "rumba", "pop_español", "electronica"]
+      rhythm_patterns: ["flamenco_compas", "rumba_catalana"]
+      instruments: ["flamenco_guitar", "cajon", "castanets"]
+      
+    united_states:
+      primary_genres: ["hiphop", "country", "rock", "r&b"]
+      rhythm_patterns: ["trap_beat", "country_shuffle", "rock_4-4"]
+      instruments: ["electric_guitar", "drums", "synth", "banjo"]
+
+  # Quality standards
+  quality_standards:
+    production_quality: "professional"
+    recording_quality: "high"
+    musical_complexity: "varied"
+    
+  # Training optimizations
+  training_optimizations:
+    genre_balanced_batches: true
+    style_transfer_pairs: true
+    cross_genre_augmentation: true
+    country_style_presets: true
+    
+  # Comprehensive metadata
+  metadata_features:
+    mood_tags: true
+    tempo_bpm: true
+    key_signature: true
+    instrumentation: true
+    vocal_characteristics: true
+    country_of_origin: true
+    regional_style: true

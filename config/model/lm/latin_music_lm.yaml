@@ -1,0 +1,86 @@
+# @package __global__
+# Music Multiple - Latin Music Language Model Configuration
+# Specialized for latin music genres with enhanced rhythm modeling
+
+defaults:
+  - lm/default
+  - override /conditioner: style2music
+  - override /model/lm/model_scale: latin_focused
+
+lm_model: transformer_lm
+
+codebooks_pattern:
+  modeling: delay
+  delay:
+    delays: [0, 2, 4, 6, 1, 3]  # Rhythm-optimized delays
+    flatten_first: 0
+    empty_initial: 0
+  unroll:
+    flattening: [0, 1, 2, 3, 4, 5]
+    delays: [0, 0, 0, 0, 0, 0]
+  music_lm:
+    group_by: 4  # Strong grouping for rhythmic patterns
+  coarse_first:
+    delays: [0, 1, 2, 0]
+
+transformer_lm:
+  n_q: 8                    # More codebooks for rhythmic complexity
+  card: 2048
+  memory_efficient: true
+  bias_proj: true
+  bias_ff: true
+  bias_attn: true
+  norm_first: true
+  layer_scale: 0.05
+  weight_init: gaussian
+  depthwise_init: current
+  zero_bias_init: false
+  attention_as_float32: false
+  dropout: 0.05             # Lower dropout for pattern consistency
+  activation: gelu
+  positional_embedding: rope  # ROPE for better sequence modeling
+  cross_attention: true
+  two_step_cfg: true
+  past_context: 512         # Extended context for musical phrases
+
+# Music Multiple: Latin music specialization
+music_multiple:
+  model_type: "latin_music_specialized"
+  application: "latin_music_generation"
+  genre_adaptability: "latin_focused"
+  
+  latin_genre_expertise:
+    salsa:
+      clave_patterns: "expert"
+      horn_sections: "excellent"
+      piano_montunos: "excellent"
+    reggaeton:
+      dem_bow_rhythm: "expert"
+      synth_bass_lines: "excellent"
+      vocal_flow: "very_good"
+    bachata:
+      guitar_techniques: "excellent"
+      romantic_melodies: "excellent"
+      bongo_patterns: "very_good"
+    cumbia:
+      accordion_phrasing: "excellent"
+      gaita_embellishments: "good"
+      traditional_rhythms: "excellent"
+      
+  rhythm_enhancements:
+    polyrhythm_modeling: true
+    syncopation_handling: "advanced"
+    percussion_articulation: "detailed"
+    dance_compatibility: true
+    
+  cultural_features:
+    regional_variations: true
+    traditional_forms: true
+    language_specific_lyrics: true
+    emotional_authenticity: "high"
+    
+  training_specialization:
+    latin_music_datasets: true
+    rhythm_pattern_augmentation: true
+    cultural_preservation: true
+    genre_pure_training: true

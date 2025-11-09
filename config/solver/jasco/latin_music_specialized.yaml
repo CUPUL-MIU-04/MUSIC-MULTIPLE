@@ -1,0 +1,145 @@
+# @package __global__
+# Music Multiple - Latin Music JASCO Configuration
+# JASCO model specialized for latin music
+
+defaults:
+  - musicgen/default
+  - /model: lm/latin_music_lm
+  - override /dset: audio/latin_music_48khz
+  - override /conditioner: style2music
+  - _self_
+
+lm_model: flow_matching
+solver: jasco
+
+autocast: true
+autocast_dtype: bfloat16
+
+# EnCodec specialized for latin music
+compression_model_checkpoint: //pretrained/music_multiple/encodec_latin_48khz
+compression_model_latent_std: 4.2048
+compression_model_latent_mean: -0.0096
+compression_model_framerate: 100  # Higher framerate for complex rhythms
+compression_model_latent_dim: 160
+
+efficient_attention_backend: xformers
+
+channels: 2  # Stereo for full musical experience
+sample_rate: 48000  # Professional quality
+
+deadlock:
+  use: true
+
+dataset:
+  segment_duration: 20  # Longer segments for complete musical phrases
+  batch_size: 120  # Adjusted for complex audio
+  sample_on_weight: true
+  sample_on_duration: false
+  compression_model_framerate: ${compression_model_framerate}
+
+optim:
+  epochs: 800  # Extensive training for cultural mastery
+  optimizer: adamw
+  lr: 6e-5  # Very low learning rate for precision
+  ema:
+    use: true
+    updates: 20
+    device: cuda
+  max_norm: 0.6  # Tighter gradient clipping
+
+logging:
+  log_tensorboard: true
+  log_audio_samples: true
+  log_cultural_metrics: true
+
+schedule:
+  lr_scheduler: cosine
+  cosine:
+    warmup: 8000
+    lr_min_ratio: 0.02
+    cycle_length: 1.0
+
+transformer_lm:
+  causal: false
+  skip_connections: true
+  flow_dim: ${compression_model_latent_dim}
+  rhythm_dim: ${conditioners.rhythm_style.rhythm_pattern.out_dim}
+
+generate:
+  lm: 
+    max_prompt_len: null
+    max_gen_len: null
+    remove_prompts: false
+    cfg_coef_all: 5.0
+    cfg_coef_txt: 2.0
+    cfg_coef_rhythm: 3.0
+    prompted_samples: false
+    samples:
+      prompted: false
+      unprompted: true
+
+# Music Multiple: Latin music JASCO specialization
+music_multiple:
+  model_type: "jasco_latin_music"
+  conditioning: ["text", "style", "rhythm"]
+  application: "latin_music_generation"
+  
+  latin_music_expertise:
+    rhythm_patterns: "expert"
+    cultural_authenticity: "expert"
+    regional_variations: "expert"
+    traditional_forms: "expert"
+    
+  genre_specialization:
+    salsa: 
+      clave_patterns: true
+      horn_sections: true
+      piano_montunos: true
+    reggaeton:
+      dem_bow_rhythm: true
+      synth_bass: true
+      vocal_style: true
+    bachata:
+      guitar_techniques: true
+      romantic_melodies: true
+      bongo_patterns: true
+    cumbia:
+      accordion_style: true
+      traditional_rhythms: true
+      regional_variants: true
+    merengue:
+      quick_tempo: true
+      saxophone_style: true
+      traditional_patterns: true
+    
+  cultural_features:
+    regional_authenticity: true
+    language_support: [
+      "spanish_mexico", "spanish_caribbean", "spanish_south_america",
+      "portuguese_brazil", "indigenous_languages", "instrumental"
+    ]
+    regional_breakdown:
+      mexico:
+        genres: ["norteno", "banda", "mariachi"]
+        languages: ["spanish_mexico", "indigenous_languages"]
+      caribbean:
+        genres: ["salsa", "reggaeton", "merengue", "bachata"]
+        languages: ["spanish_caribbean"]
+      south_america:
+        genres: ["cumbia", "samba", "tango", "vallenato"]
+        languages: ["spanish_south_america", "portuguese_brazil"]
+      brazil:
+        genres: ["samba", "bossa_nova", "forro", "axe"]
+        languages: ["portuguese_brazil"]
+      central_america:
+        genres: ["punta", "reggaeton", "cumbia"]
+        languages: ["spanish_caribbean", "indigenous_languages"]
+    dance_compatibility: true
+    emotional_expressiveness: true
+    
+  quality_targets:
+    rhythm_accuracy: ">= 95%"
+    cultural_authenticity: ">= 90%"
+    instrument_fidelity: ">= 85%"
+    danceability: ">= 80%"
+    regional_accuracy: ">= 85%"
