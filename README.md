@@ -25,6 +25,6 @@ python -m pip install 'torch==2.1.0'
 python -m pip install setuptools wheel
 # Then proceed to one of the following
 python -m pip install -U music-multiple  # stable release (coming soon)
-python -m pip install -U git+https://github.com/your-username/music-multiple#egg=music-multiple  # bleeding edge
+python -m pip install -U git+https://github.com/cupul-miu-04/music-multiple#egg=music-multiple  # bleeding edge
 python -m pip install -e .  # or if you cloned the repo locally (mandatory if you want to train).
 python -m pip install -e '.[wm]'  # if you want to train a watermarking model
