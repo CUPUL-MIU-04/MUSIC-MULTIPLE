@@ -2,9 +2,10 @@ fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
 pydantic==2.5.0
-numpy==1.24.3
-joblib==1.3.2
+# joblib==1.3.2  # Comenta temporalmente
+# numpy==1.24.3  # Comenta temporalmente - es el que falla
 aiofiles==23.2.1
-python-jose==3.3.0
-passlib==1.7.4
+# python-jose==3.3.0  # Comenta temporalmente
+# passlib==1.7.4  # Comenta temporalmente
 setuptools==65.5.0
+wheel==0.41.0
