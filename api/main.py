@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 
-# Importación relativa
-from .auth import verify_api_key
+# IMPORTACIÓN ABSOLUTA CORRECTA:
+from auth import verify_api_key  # ← SIN el punto
 
 app = FastAPI(title="Music AI API", description="API para modelo de música con IA")
 
