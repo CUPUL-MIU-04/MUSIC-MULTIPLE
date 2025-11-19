@@ -41,3 +41,14 @@ torchdiffeq
 # magenta              # For MIDI and music theory integration
 # audiocraft-tools     # For enhanced audio processing
 # pydub                # For audio format conversion
+
+# ======================
+# API WEB DEPENDENCIES
+# ======================
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+pydantic==2.5.0
+aiofiles==23.2.1
+python-jose==3.3.0
+passlib==1.7.4
