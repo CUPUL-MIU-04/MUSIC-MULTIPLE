@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Header
 from typing import Annotated
 
-# API Keys válidas - CAMBIA ESTAS KEYS EN PRODUCCIÓN!
+# API Keys válidas
 VALID_API_KEYS = [
     "music_ai_key_gerardo_2024",
     "cupul_miu_04_music_key",
