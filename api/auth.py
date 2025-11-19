@@ -1,5 +1,1 @@
-from fastapi import HTTPException, Header
-from typing import Annotated
-import os
-
-# Resto del código igual...
+# from main import algo  # O simplemente elimínalo si no es necesario
