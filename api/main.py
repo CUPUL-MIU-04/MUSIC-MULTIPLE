@@ -5,21 +5,38 @@ import base64
 import io
 import torch
 import torchaudio
-from auth import verify_api_key
 import os
 import sys
-import typing as tp
 
-# Agregar el path actual para importar audiocraft
-sys.path.append('/app')
+# Agregar el path para imports relativos
+sys.path.append(os.path.dirname(__file__))
 
-# Intentar importar tu modelo personalizado
+# Importación corregida - prueba diferentes opciones:
 try:
-    # Importar directamente desde la estructura de archivos
-    from audiocraft.models.musicgen import MusicGen
+    # Opción 1: Importación relativa
+    from .auth import verify_api_key
+except ImportError:
+    try:
+        # Opción 2: Importación directa
+        from auth import verify_api_key
+    except ImportError:
+        # Opción 3: Crear función simple si todo falla
+        from fastapi import Header
+        from typing import Annotated
+        
+        VALID_API_KEYS = ["cupul_miu_04_music_key"]
+        
+        async def verify_api_key(api_key: Annotated[str | None, Header()] = None):
+            if not api_key or api_key not in VALID_API_KEYS:
+                raise HTTPException(status_code=401, detail="API key inválida")
+            return True
+
+# El resto de tu código para audiocraft...
+try:
     from audiocraft.models.music_multiple import MusicMultiple
+    from audiocraft.models.musicgen import MusicGen
     MODEL_LOADED = True
-    print("✅ Módulos de audiocraft importados exitosamente")
+    print("✅ Audiocraft importado exitosamente")
 except ImportError as e:
     print(f"❌ Error importando audiocraft: {e}")
     MODEL_LOADED = False
@@ -42,10 +59,7 @@ print(f"Usando dispositivo: {device}")
 
 class TextToMusicRequest(BaseModel):
     text: str
-    duration: int = 30
-    genre: tp.Optional[str] = None
-    subgenre: tp.Optional[str] = None
-    duration_type: tp.Optional[str] = "medium"
+    duration: int = 10
 
 class MusicResponse(BaseModel):
     success: bool
@@ -62,67 +76,43 @@ async def startup_event():
         return
         
     try:
-        print("🎵 Cargando modelo Music Multiple...")
+        print("🎵 Cargando modelo de música...")
         
-        # Cargar usando tu método get_pretrained personalizado
-        music_model = MusicMultiple.get_pretrained('facebook/musicgen-small', device=device)
-        print("✅ MusicMultiple cargado exitosamente")
+        # Opción 1: Intentar cargar MusicMultiple
+        try:
+            music_model = MusicMultiple.get_pretrained('facebook/musicgen-small')
+            print("✅ MusicGen cargado (como MusicMultiple)")
+        except Exception as e:
+            print(f"❌ Error cargando modelo: {e}")
+            music_model = None
         
-        # Configurar duración por defecto
-        if hasattr(music_model, 'set_duration'):
-            music_model.set_duration('medium')
+        if music_model:
+            music_model.to(device)
+            music_model.set_generation_params(duration=10)
+            print("🎉 Modelo de música listo!")
         else:
-            music_model.set_generation_params(duration=30)
-        
-        print("🎉 Modelo Music Multiple listo para generar música!")
-        
-        # Mostrar géneros disponibles
-        if hasattr(music_model, 'list_available_genres'):
-            music_model.list_available_genres()
+            print("🔶 No se pudo cargar ningún modelo")
             
     except Exception as e:
-        print(f"❌ Error cargando MusicMultiple: {e}")
+        print(f"❌ Error en startup: {e}")
         music_model = None
 
 @app.post("/generate-music")
 async def generate_music(request: TextToMusicRequest, authorized: bool = Depends(verify_api_key)):
     try:
         if music_model is None or not MODEL_LOADED:
-            # Modo simulación
             return await generate_simulated_audio(request.text, request.duration)
         
-        print(f"🎵 Generando música para: '{request.text}'")
+        print(f"🎵 Generando música para: {request.text}")
         
         with torch.no_grad():
-            # Configurar duración
-            if hasattr(music_model, 'set_duration') and request.duration_type:
-                try:
-                    music_model.set_duration(request.duration_type)
-                except ValueError as e:
-                    print(f"⚠️  Error configurando duración: {e}")
-                    music_model.set_generation_params(duration=request.duration)
-            else:
-                music_model.set_generation_params(duration=request.duration)
-            
-            # Generar música según los parámetros
-            if request.genre:
-                # Usar generación con género específico
-                print(f"🎶 Usando género: {request.genre}, subgénero: {request.subgenre}")
-                generated_audio = music_model.generate_with_genre(
-                    descriptions=[request.text],
-                    genre=request.genre,
-                    subgenre=request.subgenre,
-                    progress=False
-                )
-            else:
-                # Generación normal
-                generated_audio = music_model.generate(
-                    descriptions=[request.text],
-                    progress=False
-                )
+            music_model.set_generation_params(duration=request.duration)
+            generated_audio = music_model.generate(
+                descriptions=[request.text],
+                progress=False
+            )
         
-        # Procesar el audio generado
-        sample_rate = music_model.sample_rate
+        sample_rate = 32000
         audio_tensor = generated_audio[0].cpu()
         
         # Guardar como WAV
@@ -152,25 +142,9 @@ async def generate_simulated_audio(text: str, duration: int):
     sample_rate = 44100
     t = np.linspace(0, duration, int(sample_rate * duration))
     
-    # Melodía más interesante para la simulación
+    # Melodía simple
     base_freq = 220 + (hash(text) % 300)
-    melody = np.zeros_like(t)
-    
-    # Crear una progresión de acordes simple
-    chords = [base_freq, base_freq * 1.25, base_freq * 1.5]
-    for i, freq in enumerate(chords):
-        start = i * duration / len(chords)
-        end = (i + 1) * duration / len(chords)
-        mask = (t >= start) & (t < end)
-        melody[mask] = np.sin(2 * np.pi * freq * t[mask]) * 0.2
-    
-    # Agregar ritmo
-    beat_freq = 2  # Hz
-    rhythm = np.sin(2 * np.pi * beat_freq * t) * 0.1
-    melody += rhythm
-    
-    # Normalizar
-    melody = melody * 0.3
+    melody = np.sin(2 * np.pi * base_freq * t) * 0.3
     
     # Convertir a WAV
     buffer = io.BytesIO()
@@ -187,48 +161,15 @@ async def generate_simulated_audio(text: str, duration: int):
         model_used="simulation"
     )
 
-# Endpoints adicionales para explorar capacidades del modelo
-@app.get("/genres")
-async def list_genres():
-    """Listar todos los géneros y subgéneros disponibles"""
-    if music_model is None or not hasattr(music_model, 'available_genres'):
-        return {"error": "Modelo no disponible o no tiene géneros configurados"}
-    
-    return {
-        "success": True,
-        "genres": music_model.available_genres
-    }
-
-@app.get("/durations")
-async def list_durations():
-    """Listar todas las duraciones preconfiguradas"""
-    if music_model is None or not hasattr(music_model, 'available_durations'):
-        return {"error": "Modelo no disponible o no tiene duraciones configuradas"}
-    
-    return {
-        "success": True, 
-        "durations": music_model.available_durations
-    }
-
 @app.get("/health")
 async def health_check():
     return {
         "status": "healthy", 
         "model_loaded": music_model is not None,
         "audiocraft_available": MODEL_LOADED,
-        "device": device,
-        "model_type": "MusicMultiple" if music_model else "None"
+        "device": device
     }
 
 @app.get("/")
 async def root():
-    return {
-        "message": "Music Multiple API funcionando", 
-        "version": "1.0",
-        "features": [
-            "Generación de música desde texto",
-            "Soporte para géneros latinos",
-            "Procesamiento en español", 
-            "Múltiples duraciones preconfiguradas"
-        ]
-    }
+    return {"message": "Music Multiple API funcionando", "version": "1.0"}
