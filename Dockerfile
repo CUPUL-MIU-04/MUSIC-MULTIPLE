@@ -2,30 +2,27 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Instalar dependencias del sistema para AV
+# Instalar herramientas de compilación y dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    libavcodec-dev \
+    gcc \
+    g++ \
+    make \
+    pkg-config \
     libavformat-dev \
+    libavcodec-dev \
     libavdevice-dev \
     libavutil-dev \
     libswscale-dev \
     libswresample-dev \
     libavfilter-dev \
-    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements e instalar dependencias
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Instalar AV específicamente (requerido por audiocraft)
-RUN pip install --no-cache-dir av
-
-# Copiar TODO el código
+# Copiar TODO el código (incluyendo audiocraft)
 COPY . .
-
-# Crear archivos __init__.py necesarios
-RUN touch api/__init__.py && touch audiocraft/__init__.py && touch audiocraft/models/__init__.py
 
 # Exponer el puerto
 EXPOSE 10000
