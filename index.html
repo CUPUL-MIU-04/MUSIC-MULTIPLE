@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Multiple - Generar Música desde Texto</title>
+    <style>
+        :root {
+            --primary: #6d28d9;
+            --primary-dark: #5b21b6;
+            --secondary: #f0f9ff;
+            --text: #1f2937;
+            --light: #f8fafc;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .input-section {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .text-input-container {
+            margin-bottom: 20px;
+        }
+        
+        .text-input {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .examples {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .example-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .example-tag {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .example-tag:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--secondary);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: var(--light);
+            border: 1px solid var(--border);
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-online {
+            background: var(--success);
+        }
+        
+        .status-offline {
+            background: var(--error);
+        }
+        
+        .status-loading {
+            background: var(--warning);
+        }
+        
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .results {
+            display: none;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .audio-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .play-btn {
+            background: var(--success);
+            color: white;
+        }
+        
+        .stop-btn {
+            background: var(--error);
+            color: white;
+        }
+        
+        .download-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: var(--error);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--error);
+            display: none;
+        }
+        
+        .api-info {
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--light);
+            color: #6b7280;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Music Multiple</h1>
+            <p class="subtitle">Genera música desde texto usando Inteligencia Artificial</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2>Describe la música que quieres crear</h2>
+                
+                <div class="text-input-container">
+                    <textarea class="text-input" id="textInput" placeholder="Ej: Una melodía relajante con piano y cuerdas, tempo lento, ambiente cálido y nostálgico..."></textarea>
+                    <div class="examples">
+                        <p>Ejemplos de descripciones musicales:</p>
+                        <div class="example-tags">
+                            <div class="example-tag" onclick="setExample('rock energético con guitarra eléctrica y batería potente')">🎸 Rock energético</div>
+                            <div class="example-tag" onclick="setExample('melodía clásica con piano y violín, tempo moderado')">🎹 Clásica suave</div>
+                            <div class="example-tag" onclick="setExample('beat electrónico con sintetizadores y bajo profundo')">🎧 Electrónica</div>
+                            <div class="example-tag" onclick="setExample('jazz relajado con saxofón y contrabajo')">🎷 Jazz suave</div>
+                            <div class="example-tag" onclick="setExample('ambient espacial con pads etéreos y ecos')">🌌 Ambiental</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="clearText()">
+                        <span>🗑️</span> Limpiar
+                    </button>
+                    <button class="btn-primary" id="generateBtn" onclick="generateMusicFromText()">
+                        <span>🎵</span> Generar Música
+                    </button>
+                </div>
+                
+                <div class="status-indicator">
+                    <div class="status-dot status-online" id="statusDot"></div>
+                    <span id="statusText">Conectando a la API...</span>
+                </div>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generando tu música...</p>
+                <p>Esto puede tomar unos segundos mientras la IA procesa tu descripción</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="loadingStatus">Inicializando modelo...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="result-card">
+                    <div class="result-title">
+                        <span>🎵</span> Tu Música Generada
+                    </div>
+                    <audio class="audio-player" id="audioPlayer" controls></audio>
+                    <div class="audio-controls">
+                        <button class="audio-btn play-btn" onclick="playAudio()">
+                            <span>▶️</span> Reproducir
+                        </button>
+                        <button class="audio-btn stop-btn" onclick="stopAudio()">
+                            <span>⏹️</span> Detener
+                        </button>
+                        <button class="audio-btn download-btn" onclick="downloadAudio()">
+                            <span>💾</span> Descargar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">
+                        <span>📝</span> Información de la Generación
+                    </div>
+                    <div id="generationInfo">
+                        <p><strong>Descripción:</strong> <span id="usedDescription"></span></p>
+                        <p><strong>Duración:</strong> <span id="audioDuration">--:--</span></p>
+                        <p><strong>Formato:</strong> <span id="audioFormat">WAV</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="api-info">
+                <h3>🔧 Información Técnica</h3>
+                <p>Esta aplicación utiliza tu modelo de IA entrenado para generar música desde descripciones de texto.</p>
+                <p><strong>Endpoint:</strong> <code>https://music-multiple.onrender.com/generate-music</code></p>
+                <p><strong>API Key:</strong> <code>cupul_miu_04_music_key</code></p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Music Multiple &copy; 2024 | Modelo IA entrenado para generación musical desde texto</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuración
+        const API_URL = 'https://music-multiple.onrender.com';
+        const API_KEY = 'cupul_miu_04_music_key';
+        
+        // Elementos del DOM
+        const textInput = document.getElementById('textInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorMessage = document.getElementById('errorMessage');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const progressFill = document.getElementById('progressFill');
+        const loadingStatus = document.getElementById('loadingStatus');
+        const usedDescription = document.getElementById('usedDescription');
+        const audioDuration = document.getElementById('audioDuration');
+        
+        // Variables de estado
+        let isGenerating = false;
+        
+        // Ejemplos predefinidos
+        function setExample(text) {
+            textInput.value = text;
+        }
+        
+        function clearText() {
+            textInput.value = '';
+        }
+        
+        // Verificar estado de la API
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDot.className = 'status-dot status-online';
+                    statusText.textContent = `✅ API en línea - Modelo de música cargado`;
+                } else {
+                    throw new Error('API no responde correctamente');
+                }
+            } catch (error) {
+                statusDot.className = 'status-dot status-offline';
+                statusText.textContent = '❌ Error conectando a la API';
+                console.error('Error:', error);
+            }
+        }
+        
+        // Simular progreso (en una implementación real, esto vendría del servidor)
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                progressFill.style.width = `${progress}%`;
+                
+                // Actualizar mensajes de estado
+                if (progress < 30) {
+                    loadingStatus.textContent = 'Procesando descripción textual...';
+                } else if (progress < 60) {
+                    loadingStatus.textContent = 'Generando composición musical...';
+                } else if (progress < 90) {
+                    loadingStatus.textContent = 'Renderizando audio...';
+                } else {
+                    loadingStatus.textContent = 'Finalizando...';
+                }
+            }, 500);
+        }
+        
+        // Generar música desde texto
+        async function generateMusicFromText() {
+            const description = textInput.value.trim();
+            
+            if (!description) {
+                showError('Por favor, describe la música que quieres generar.');
+                return;
+            }
+            
+            if (isGenerating) {
+                return;
+            }
+            
+            // Resetear interfaz
+            hideError();
+            results.style.display = 'none';
+            loading.style.display = 'flex';
+            generateBtn.disabled = true;
+            isGenerating = true;
+            
+            // Simular progreso (en producción, esto sería real)
+            simulateProgress();
+            
+            try {
+                // NOTA: Esto asume que tu API tiene un endpoint /generate-music
+                // que acepta texto y devuelve audio
+                const response = await fetch(`${API_URL}/generate-music`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        text: description,
+                        duration: 30, // segundos
+                        format: 'wav'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Error ${response.status}: ${response.statusText}`);
+                }
+                
+                // Asumimos que la respuesta es un archivo de audio
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                // Configurar el reproductor de audio
+                audioPlayer.src = audioUrl;
+                usedDescription.textContent = description;
+                
+                // Esperar a que se carguen los metadatos del audio
+                audioPlayer.onloadedmetadata = function() {
+                    audioDuration.textContent = formatTime(audioPlayer.duration);
+                };
+                
+                // Mostrar resultados
+                results.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error generando música:', error);
+                
+                // Si tu API no tiene el endpoint /generate-music todavía,
+                // mostramos un mensaje informativo y un ejemplo simulado
+                if (error.message.includes('404') || error.message.includes('Not Found')) {
+                    showInfo('El endpoint de generación de música no está disponible todavía. Aquí tienes un ejemplo simulado.');
+                    simulateAudioResult(description);
+                } else {
+                    showError(`Error al generar música: ${error.message}`);
+                }
+            } finally {
+                loading.style.display = 'none';
+                generateBtn.disabled = false;
+                isGenerating = false;
+                progressFill.style.width = '0%';
+            }
+        }
+        
+        // Simular resultado de audio (para desarrollo)
+        function simulateAudioResult(description) {
+            // Crear un audio de ejemplo (onda senoidal)
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const duration = 5;
+            const sampleRate = audioContext.sampleRate;
+            const frameCount = sampleRate * duration;
+            
+            const audioBuffer = audioContext.createBuffer(1, frameCount, sampleRate);
+            const channelData = audioBuffer.getChannelData(0);
+            
+            // Generar una melodía simple basada en la descripción
+            const baseFreq = 220;
+            for (let i = 0; i < frameCount; i++) {
+                const time = i / sampleRate;
+                // Melodía simple que varía según la descripción
+                const freq = baseFreq + (description.length % 7) * 50;
+                channelData[i] = Math.sin(2 * Math.PI * freq * time) * 0.3;
+            }
+            
+            // Convertir a WAV
+            const wavBuffer = encodeWAV(channelData, sampleRate);
+            const blob = new Blob([wavBuffer], { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(blob);
+            
+            audioPlayer.src = audioUrl;
+            usedDescription.textContent = description + " (simulación)";
+            audioDuration.textContent = "00:05";
+            results.style.display = 'block';
+        }
+        
+        // Funciones de utilidad para audio
+        function encodeWAV(samples, sampleRate) {
+            const buffer = new ArrayBuffer(44 + samples.length * 2);
+            const view = new DataView(buffer);
+            
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+            
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + samples.length * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, samples.length * 2, true);
+            
+            let offset = 44;
+            for (let i = 0; i < samples.length; i++) {
+                const s = Math.max(-1, Math.min(1, samples[i]));
+                view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                offset += 2;
+            }
+            
+            return buffer;
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Controles de audio
+        function playAudio() {
+            audioPlayer.play();
+        }
+        
+        function stopAudio() {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+        }
+        
+        function downloadAudio() {
+            const a = document.createElement('a');
+            a.href = audioPlayer.src;
+            a.download = `musica_generada_${Date.now()}.wav`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        // Manejo de errores
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            errorMessage.style.background = '#fee2e2';
+            errorMessage.style.color = '#dc2626';
+            errorMessage.style.borderLeftColor = '#dc2626';
+        }
+        
+        function showInfo(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            errorMessage.style.background = '#dbeafe';
+            errorMessage.style.color = '#1e40af';
+            errorMessage.style.borderLeftColor = '#3b82f6';
+        }
+        
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAPIStatus();
+            
+            // Permitir Enter para generar (pero Shift+Enter para nueva línea)
+            textInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    generateMusicFromText();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
