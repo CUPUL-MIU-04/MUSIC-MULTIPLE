@@ -2,19 +2,23 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Instalar dependencias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar TODO primero
+# Copiar requirements primero para cache
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar TODO el proyecto
 COPY . .
 
-# Instalar dependencias Python
-RUN pip install --no-cache-dir -r api/requirements.txt
+# Crear __init__.py si no existe
+RUN touch api/__init__.py && touch audiocraft/__init__.py && touch audiocraft/models/__init__.py
 
-# Exponer el puerto
+# Exponer puerto
 EXPOSE 10000
 
 # Comando para ejecutar
