@@ -1,38 +1,36 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 import base64
 import io
 import torch
 import torchaudio
-from auth import verify_api_key
 import os
 import sys
 
-# Agregar el path actual para importar audiocraft
-sys.path.append('/app')
+# Agregar el path actual para importar módulos locales
+sys.path.append('/app/api')
 
-# Configuración de modelo
-MODEL_LOADED = False
-music_model = None
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-print(f"🎵 Inicializando Music Multiple API...")
-print(f"📱 Dispositivo: {device}")
-
-# Intentar importar audiocraft después de instalar soundfile
+# Ahora importar auth desde el mismo directorio
 try:
-    import soundfile as sf
-    print("✅ soundfile importado exitosamente")
-    
-    # Ahora intentar importar audiocraft
+    from auth import verify_api_key
+except ImportError as e:
+    print(f"❌ Error importando auth: {e}")
+    # Fallback simple si auth no está disponible
+    async def verify_api_key(api_key: str = None):
+        if not api_key:
+            raise HTTPException(status_code=401, detail="API key requerida")
+        return True
+
+# Intentar importar audiocraft
+try:
+    sys.path.append('/app')
     from audiocraft.models.music_multiple import MusicMultiple
     from audiocraft.models.musicgen import MusicGen
     MODEL_LOADED = True
     print("✅ Audiocraft importado exitosamente")
-    
 except ImportError as e:
-    print(f"❌ Error importando dependencias: {e}")
+    print(f"❌ Error importando audiocraft: {e}")
     MODEL_LOADED = False
 
 app = FastAPI(title="Music Multiple API", description="API para generación de música desde texto")
@@ -46,13 +44,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Modelo global
+music_model = None
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Usando dispositivo: {device}")
+
 class TextToMusicRequest(BaseModel):
     text: str
     duration: int = 10
 
 class MusicResponse(BaseModel):
-    model_config = ConfigDict(protected_namespaces=())
-    
     success: bool
     message: str
     audio_data: str = None
@@ -62,7 +63,6 @@ class MusicResponse(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     global music_model
-    
     if not MODEL_LOADED:
         print("🔶 Modo simulación - audiocraft no disponible")
         return
@@ -70,26 +70,26 @@ async def startup_event():
     try:
         print("🎵 Cargando modelo de música...")
         
-        # Intentar cargar modelos en orden de preferencia
-        models_to_try = [
-            ("MusicMultiple", lambda: MusicMultiple.get_pretrained('facebook/musicgen-melody')),
-            ("MusicGen Melody", lambda: MusicGen.get_pretrained('facebook/musicgen-melody')),
-            ("MusicGen Small", lambda: MusicGen.get_pretrained('facebook/musicgen-small')),
-        ]
-        
-        for model_name, loader in models_to_try:
+        # Opción 1: Intentar cargar MusicMultiple
+        try:
+            # Ajusta esto según cómo se carga tu modelo personalizado
+            music_model = MusicMultiple.get_pretrained('facebook/musicgen-small')  # Cambia por tu modelo
+            print("✅ MusicMultiple cargado")
+        except Exception as e:
+            print(f"❌ Error cargando MusicMultiple: {e}")
+            
+            # Opción 2: Cargar MusicGen estándar
             try:
-                music_model = loader()
-                print(f"✅ {model_name} cargado exitosamente")
-                break
-            except Exception as e:
-                print(f"❌ Error cargando {model_name}: {e}")
-                continue
+                music_model = MusicGen.get_pretrained('facebook/musicgen-small')
+                print("✅ MusicGen-small cargado como alternativa")
+            except Exception as e2:
+                print(f"❌ Error cargando MusicGen: {e2}")
+                music_model = None
         
         if music_model:
             music_model.to(device)
             music_model.set_generation_params(duration=10)
-            print(f"🎉 Modelo listo en {device}!")
+            print("🎉 Modelo de música listo!")
         else:
             print("🔶 No se pudo cargar ningún modelo")
             
@@ -98,21 +98,24 @@ async def startup_event():
         music_model = None
 
 @app.post("/generate-music")
-async def generate_music(request: TextToMusicRequest, authorized: bool = Depends(verify_api_key)):
+async def generate_music(request: TextToMusicRequest):
     try:
         if music_model is None or not MODEL_LOADED:
+            # Modo simulación
             return await generate_simulated_audio(request.text, request.duration)
         
-        print(f"🎵 Generando música para: '{request.text}'")
+        print(f"🎵 Generando música para: {request.text}")
         
         with torch.no_grad():
             music_model.set_generation_params(duration=request.duration)
+            
+            # Generar desde texto
             generated_audio = music_model.generate(
                 descriptions=[request.text],
-                progress=True
+                progress=False
             )
         
-        # Procesar audio
+        # Procesar el audio generado
         sample_rate = music_model.sample_rate
         audio_tensor = generated_audio[0].cpu()
         
@@ -128,7 +131,7 @@ async def generate_music(request: TextToMusicRequest, authorized: bool = Depends
             message=f"Música generada: {request.text}",
             audio_data=audio_b64,
             duration=request.duration,
-            model_used="musicgen"
+            model_used="music_multiple"
         )
         
     except Exception as e:
@@ -143,31 +146,29 @@ async def generate_simulated_audio(text: str, duration: int):
     sample_rate = 44100
     t = np.linspace(0, duration, int(sample_rate * duration))
     
-    # Melodía más interesante basada en el texto
-    text_hash = abs(hash(text)) % 1000
-    base_freq = 200 + (text_hash % 200)
-    
-    # Crear melodía con progresión
+    # Melodía más interesante para la simulación
+    base_freq = 220 + (hash(text) % 300)
     melody = np.zeros_like(t)
-    for i in range(4):
-        start = i * duration / 4
-        end = (i + 1) * duration / 4
-        mask = (t >= start) & (t < end)
-        chord_freq = base_freq * (1 + i * 0.2)
-        melody[mask] = np.sin(2 * np.pi * chord_freq * t[mask]) * 0.2
     
-    # Agregar bajo
-    bass_freq = base_freq * 0.5
-    bass = np.sin(2 * np.pi * bass_freq * t) * 0.1
+    # Crear una progresión de acordes simple
+    chords = [base_freq, base_freq * 1.25, base_freq * 1.5]
+    for i, freq in enumerate(chords):
+        start = i * duration / len(chords)
+        end = (i + 1) * duration / len(chords)
+        mask = (t >= start) & (t < end)
+        melody[mask] = np.sin(2 * np.pi * freq * t[mask]) * 0.2
     
     # Agregar ritmo
-    beat = np.sin(2 * np.pi * 4 * t) * 0.05
+    beat_freq = 2  # Hz
+    rhythm = np.sin(2 * np.pi * beat_freq * t) * 0.1
+    melody += rhythm
     
-    audio_data = (melody + bass + beat) * 0.3
+    # Normalizar
+    melody = melody * 0.3
     
     # Convertir a WAV
     buffer = io.BytesIO()
-    write(buffer, sample_rate, (audio_data * 32767).astype(np.int16))
+    write(buffer, sample_rate, (melody * 32767).astype(np.int16))
     buffer.seek(0)
     
     audio_b64 = base64.b64encode(buffer.read()).decode('utf-8')
