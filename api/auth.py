@@ -1,12 +1,11 @@
 from fastapi import HTTPException, Header
 from typing import Annotated
+import os
 
-# API Keys válidas
-VALID_API_KEYS = [
-    "music_ai_key_gerardo_2024",
-    "cupul_miu_04_music_key",
-    "test_key_12345"
-]
+# Obtener API Keys de variables de entorno
+# Si no existe la variable API_KEYS, usa las keys por defecto
+api_keys_str = os.environ.get("API_KEYS", "music_ai_key_gerardo_2024,cupul_miu_04_music_key,test_key_12345")
+VALID_API_KEYS = [key.strip() for key in api_keys_str.split(",")]
 
 async def verify_api_key(api_key: Annotated[str | None, Header()] = None):
     """
