@@ -1,10 +1,18 @@
+# Core API
 fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
 pydantic==2.5.0
+
+# Machine Learning
 torch==2.1.0
 torchaudio==2.1.0
 numpy==1.24.3
 scipy==1.10.1
+
+# Audio processing (evitar av si es posible)
 librosa==0.10.1
-av==11.0.0
+soundfile==0.12.1
+
+# Optional: si realmente necesitas av, usar versión precompilada
+# av==11.0.0
