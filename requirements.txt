@@ -15,4 +15,5 @@ librosa==0.10.1
 soundfile==0.12.1
 
 # Optional: si realmente necesitas av, usar versión precompilada
-# av==11.0.0
+av==10.0.0
+pyav==10.0.0
