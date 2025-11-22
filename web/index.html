@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Multiple - Clasificación de Géneros Musicales con IA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, var(--primary), transparent);
+            border-radius: 50%;
+            transform: translate(100px, -100px);
+            opacity: 0.1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            background: var(--light);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online {
+            background: var(--success);
+        }
+
+        .status-offline {
+            background: var(--error);
+        }
+
+        .status-loading {
+            background: var(--warning);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4em;
+        }
+
+        .card h3 i {
+            color: var(--primary);
+        }
+
+        .feature-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .feature-input {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .feature-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: var(--primary);
+        }
+
+        .upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: #e0e7ff;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .prediction-result {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .genre-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 15px 0;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .confidence-meter {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #22c55e);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .genre-probabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .genre-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .genre-item:hover {
+            transform: translateX(5px);
+        }
+
+        .genre-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .genre-probability {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .genre-item.active .genre-probability {
+            color: white;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: var(--error);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--error);
+        }
+
+        .success {
+            background: #f0fdf4;
+            color: #065f46;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--success);
+        }
+
+        .info-box {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: var(--gray);
+        }
+
+        .model-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .model-badge {
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-music"></i>
+            </div>
+            <h1>Music Multiple</h1>
+            <p class="subtitle">Clasificación de Géneros Musicales con Inteligencia Artificial</p>
+            
+            <div class="api-status">
+                <div class="status-indicator status-loading" id="statusIndicator"></div>
+                <span id="statusText">Conectando con la API...</span>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Panel de Características -->
+            <div class="card">
+                <h3><i class="fas fa-sliders-h"></i> Características de Audio</h3>
+                <p>Ingresa manualmente las características MFCC y espectrales del audio:</p>
+                
+                <div class="feature-inputs" id="featureInputs">
+                    <!-- Los 27 inputs se generarán automáticamente -->
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="generateRandomFeatures()">
+                        <i class="fas fa-dice"></i> Características Aleatorias
+                    </button>
+                    <button class="btn-primary" onclick="predictFromFeatures()">
+                        <i class="fas fa-brain"></i> Predecir Género
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <strong><i class="fas fa-info-circle"></i> Información:</strong><br>
+                    Se utilizan 27 características: 13 MFCCs + características espectrales y rítmicas
+                </div>
+            </div>
+
+            <!-- Panel de Subida de Audio -->
+            <div class="card">
+                <h3><i class="fas fa-file-audio"></i> Subir Archivo de Audio</h3>
+                <p>Sube un archivo de audio para análisis automático:</p>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('audioFile').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h4>Haz clic o arrastra un archivo de audio</h4>
+                    <p>Formatos soportados: WAV, MP3, FLAC (máx. 10MB)</p>
+                    <input type="file" id="audioFile" accept=".wav,.mp3,.flac" style="display: none;" onchange="handleFileSelect(this.files[0])">
+                </div>
+
+                <div id="fileInfo" class="file-info" style="display: none;">
+                    <strong>Archivo seleccionado:</strong> <span id="fileName"></span>
+                    <br><small>Tamaño: <span id="fileSize"></span></small>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-primary" onclick="predictFromAudio()" id="predictAudioBtn" disabled>
+                        <i class="fas fa-magic"></i> Analizar Audio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Procesando con IA musical...</p>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+            <h3><i class="fas fa-chart-bar"></i> Resultados del Análisis</h3>
+            <div id="resultContent"></div>
+        </div>
+
+        <!-- API Information -->
+        <div class="info-box">
+            <div class="model-info">
+                <div>
+                    <strong><i class="fas fa-key"></i> API Key:</strong> music_ai_key_gerardo_2024<br>
+                    <strong><i class="fas fa-globe"></i> Endpoint:</strong> https://music-multiple.onrender.com
+                </div>
+                <div class="model-badge" id="modelBadge">
+                    <i class="fas fa-robot"></i> <span id="modelStatus">Cargando modelo...</span>
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <strong><i class="fas fa-book"></i> Documentación:</strong> 
+                <a href="https://music-multiple.onrender.com/docs" target="_blank">Ver API Docs</a> |
+                <a href="https://music-multiple.onrender.com/health" target="_blank">Health Check</a> |
+                <a href="https://music-multiple.onrender.com/model-info" target="_blank">Model Info</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Music Multiple &copy; 2024 - Sistema de Clasificación de Géneros Musicales con IA</p>
+        </div>
+    </div>
+
+    <!-- Incluir el cliente de la API -->
+    <script src="model.js"></script>
+    
+    <script>
+        // Inicializar el cliente de la API
+        const client = new MusicAIClient(
+            'music_ai_key_gerardo_2024',
+            'https://music-multiple.onrender.com'
+        );
+
+        // Elementos del DOM
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const featureInputs = document.getElementById('featureInputs');
+        const uploadArea = document.getElementById('uploadArea');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const resultContent = document.getElementById('resultContent');
+        const predictAudioBtn = document.getElementById('predictAudioBtn');
+        const modelBadge = document.getElementById('modelBadge');
+        const modelStatus = document.getElementById('modelStatus');
+
+        let selectedFile = null;
+
+        // Generar 27 inputs para características (13 MFCCs + 14 características adicionales)
+        function generateFeatureInputs() {
+            featureInputs.innerHTML = '';
+            
+            // 13 MFCCs
+            for (let i = 0; i < 13; i++) {
+                createFeatureInput(`MFCC ${i + 1}`, `mfcc${i}`);
+            }
+            
+            // Características adicionales
+            const additionalFeatures = [
+                'Centroide Espectral', 'Rolloff Espectral', 
+                'Contraste Espectral 1', 'Contraste Espectral 2', 
+                'Contraste Espectral 3', 'Contraste Espectral 4',
+                'Contraste Espectral 5', 'Contraste Espectral 6',
+                'Contraste Espectral 7', 'Tempo', 'Tasa de Cruces por Cero'
+            ];
+            
+            additionalFeatures.forEach((name, index) => {
+                createFeatureInput(name, `feature${13 + index}`);
+            });
+        }
+
+        function createFeatureInput(label, id) {
+            const container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '5px';
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'feature-input';
+            input.id = id;
+            input.placeholder = '0.00';
+            input.step = '0.01';
+            input.min = '-1';
+            input.max = '1';
+            input.value = (Math.random() * 2 - 1).toFixed(2);
+            
+            const small = document.createElement('small');
+            small.textContent = label;
+            small.style.color = 'var(--gray)';
+            small.style.fontSize = '0.8em';
+            
+            container.appendChild(input);
+            container.appendChild(small);
+            featureInputs.appendChild(container);
+        }
+
+        // Generar características aleatorias
+        function generateRandomFeatures() {
+            for (let i = 0; i < 27; i++) {
+                const input = document.getElementById(i < 13 ? `mfcc${i}` : `feature${i}`);
+                const randomValue = (Math.random() * 2 - 1).toFixed(2); // Entre -1 y 1
+                input.value = randomValue;
+            }
+        }
+
+        // Obtener características de los inputs
+        function getFeatures() {
+            const features = [];
+            for (let i = 0; i < 13; i++) {
+                const input = document.getElementById(`mfcc${i}`);
+                features.push(parseFloat(input.value) || 0);
+            }
+            for (let i = 13; i < 27; i++) {
+                const input = document.getElementById(`feature${i}`);
+                features.push(parseFloat(input.value) || 0);
+            }
+            return features;
+        }
+
+        // Manejar selección de archivo
+        function handleFileSelect(file) {
+            if (!file) return;
+            
+            if (!file.type.includes('audio')) {
+                showError('Por favor, selecciona un archivo de audio válido');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                showError('El archivo es demasiado grande (máximo 10MB)');
+                return;
+            }
+            
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            document.getElementById('fileInfo').style.display = 'block';
+            predictAudioBtn.disabled = false;
+            
+            // Cambiar estilo del área de upload
+            uploadArea.style.borderColor = 'var(--success)';
+            uploadArea.style.background = '#f0fdf4';
+        }
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Verificar estado de la API
+        async function checkAPIStatus() {
+            try {
+                const health = await client.healthCheck();
+                
+                statusIndicator.className = 'status-indicator status-online';
+                statusText.textContent = `✅ API en línea - Modelo: ${health.model_loaded ? 'Cargado' : 'No cargado'}`;
+                
+                // Actualizar badge del modelo
+                if (health.model_loaded) {
+                    modelStatus.textContent = `Modelo cargado (${health.genres_available?.length || 0} géneros)`;
+                    modelBadge.style.background = 'linear-gradient(135deg, var(--success), #059669)';
+                } else {
+                    modelStatus.textContent = 'Modelo no disponible';
+                    modelBadge.style.background = 'linear-gradient(135deg, var(--warning), #d97706)';
+                }
+                
+            } catch (error) {
+                statusIndicator.className = 'status-indicator status-offline';
+                statusText.textContent = '❌ Error conectando con la API';
+                modelStatus.textContent = 'Error de conexión';
+                modelBadge.style.background = 'linear-gradient(135deg, var(--error), #dc2626)';
+                console.error('Error conectando a la API:', error);
+            }
+        }
+
+        // Predecir desde características
+        async function predictFromFeatures() {
+            const features = getFeatures();
+            
+            loading.style.display = 'block';
+            results.style.display = 'none';
+
+            try {
+                const prediction = await client.predict(features);
+                showResults(prediction, 'características manuales');
+            } catch (error) {
+                showError(`Error en la predicción: ${error.message}`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Predecir desde archivo de audio
+        async function predictFromAudio() {
+            if (!selectedFile) {
+                showError('Por favor, selecciona un archivo de audio primero');
+                return;
+            }
+
+            loading.style.display = 'block';
+            results.style.display = 'none';
+
+            try {
+                const prediction = await client.predictAudio(selectedFile);
+                showResults(prediction, selectedFile.name);
+            } catch (error) {
+                showError(`Error procesando audio: ${error.message}`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Mostrar resultados
+        function showResults(prediction, source) {
+            results.style.display = 'block';
+            
+            const result = prediction.prediction;
+            const confidence = (result.confidence * 100).toFixed(1);
+            
+            let html = `
+                <div class="success">
+                    <strong><i class="fas fa-check-circle"></i> Análisis completado exitosamente</strong><br>
+                    <small>Fuente: ${source} | ${new Date().toLocaleString()}</small>
+                </div>
+                
+                <div class="prediction-result">
+                    <h4>Género Predicho:</h4>
+                    <div class="genre-badge">
+                        ${result.genre.toUpperCase()}
+                    </div>
+                    <p>Confianza: <strong>${confidence}%</strong></p>
+                    
+                    <div class="confidence-meter">
+                        <div class="confidence-fill" style="width: ${confidence}%"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Probabilidades por género
+            if (result.all_probabilities) {
+                html += `<h4 style="margin: 25px 0 15px 0;">Probabilidades por Género:</h4>`;
+                html += `<div class="genre-probabilities">`;
+                
+                Object.entries(result.all_probabilities)
+                    .sort(([,a], [,b]) => b - a)
+                    .forEach(([genre, prob]) => {
+                        const percent = (prob * 100).toFixed(1);
+                        const isActive = genre === result.genre;
+                        html += `
+                            <div class="genre-item ${isActive ? 'active' : ''}">
+                                <span>${genre.charAt(0).toUpperCase() + genre.slice(1)}</span>
+                                <span class="genre-probability">${percent}%</span>
+                            </div>
+                        `;
+                    });
+                
+                html += `</div>`;
+            }
+            
+            resultContent.innerHTML = html;
+        }
+
+        // Mostrar error
+        function showError(message) {
+            results.style.display = 'block';
+            resultContent.innerHTML = `
+                <div class="error">
+                    <strong><i class="fas fa-exclamation-triangle"></i> Error:</strong> ${message}
+                </div>
+            `;
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            generateFeatureInputs();
+            checkAPIStatus();
+            
+            // Verificar estado cada 30 segundos
+            setInterval(checkAPIStatus, 30000);
+        });
+    </script>
+</body>
+  </html>
