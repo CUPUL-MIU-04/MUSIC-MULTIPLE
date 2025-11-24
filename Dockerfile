@@ -10,16 +10,16 @@ RUN apt-get update && apt-get install -y \
 
 # Copiar requirements e instalar dependencias
 COPY requirements.txt .
-COPY Music-Model/requirements.txt ./Music-Model-requirements.txt
+COPY Music_Model/requirements.txt ./Music_Model-requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt -r Music-Model-requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt -r Music_Model-requirements.txt
 
 # Copiar código
 COPY api/ .
-COPY Music-Model/ ./Music-Model/
+COPY Music_Model/ ./Music_Model/
 
 # Crear directorio para modelos
-RUN mkdir -p Music-Model/models
+RUN mkdir -p Music_Model/models
 
 EXPOSE 10000
 
