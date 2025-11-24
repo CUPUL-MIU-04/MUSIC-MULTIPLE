@@ -11,7 +11,7 @@ import soundfile as sf
 # Importar el cargador de modelos
 import sys
 sys.path.append('..')
-from Music-Model.model_loader import music_model
+from Music_Model.model_loader import music_model
 
 # API Keys desde variables de entorno
 api_keys_str = os.environ.get("API_KEYS", "music_ai_key_gerardo_2024,cupul_miu_04_music_key,test_key_12345")
